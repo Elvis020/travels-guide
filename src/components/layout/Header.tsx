@@ -122,7 +122,7 @@ export function Header() {
             )}
           >
             <span className="text-white group-hover:text-white/90 transition-colors">
-              NYC
+              NYS
             </span>
             <span className="text-primary group-hover:text-primary/90 transition-colors">Travels</span>
           </Link>
@@ -227,7 +227,7 @@ export function Header() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                   <span className="font-display text-xl font-bold">
-                    NYC <span className="text-primary">Travels</span>
+                    NYS <span className="text-primary">Travels</span>
                   </span>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}

@@ -33,7 +33,7 @@ import {
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * NYC Travels - Editorial Travel Magazine Experience
+ * NYS Travels - Editorial Travel Magazine Experience
  * ═══════════════════════════════════════════════════════════════════════════
  *
  * Conversion-focused layout with:

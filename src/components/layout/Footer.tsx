@@ -45,7 +45,7 @@ export function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-5">
             <Link href="/" className="font-display text-3xl font-bold mb-6 block cursor-pointer">
-              <span className="!text-white">NYC </span>
+              <span className="!text-white">NYS </span>
               <span className="text-primary">Travels</span>
             </Link>
             <p className="!text-white/60 text-base mb-8 leading-relaxed max-w-sm">
@@ -127,7 +127,7 @@ export function Footer() {
         <div className="container-wide py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
             <p className="!text-white/50">
-              © {new Date().getFullYear()} NYC Travels. All rights reserved.
+              © {new Date().getFullYear()} NYS Travels. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               {legalLinks.map((link) => (

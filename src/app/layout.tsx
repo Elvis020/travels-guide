@@ -19,11 +19,11 @@ const lato = Lato({
 
 export const metadata: Metadata = {
   title: {
-    default: "NYC Travels | Unforgettable Ghana Adventures",
-    template: "%s | NYC Travels",
+    default: "NYS Travels | Unforgettable Ghana Adventures",
+    template: "%s | NYS Travels",
   },
   description:
-    "Discover authentic Ghana experiences with NYC Travels. From Cape Coast history to Mole wildlife safaris, explore Ghana with expert local guidance.",
+    "Discover authentic Ghana experiences with NYS Travels. From Cape Coast history to Mole wildlife safaris, explore Ghana with expert local guidance.",
   keywords: [
     "ghana tours",
     "ghana travel",
@@ -34,18 +34,18 @@ export const metadata: Metadata = {
     "ghana guide",
     "nana yaw suspense",
   ],
-  authors: [{ name: "NYC Travels" }],
+  authors: [{ name: "NYS Travels" }],
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "NYC Travels",
-    title: "NYC Travels | Unforgettable Ghana Adventures",
+    siteName: "NYS Travels",
+    title: "NYS Travels | Unforgettable Ghana Adventures",
     description:
       "Discover authentic Ghana experiences. From historic castles to wildlife safaris, explore Ghana with expert local guidance.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NYC Travels | Unforgettable Ghana Adventures",
+    title: "NYS Travels | Unforgettable Ghana Adventures",
     description:
       "Discover authentic Ghana experiences. From historic castles to wildlife safaris, explore Ghana with expert local guidance.",
   },
