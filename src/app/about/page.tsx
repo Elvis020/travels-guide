@@ -98,8 +98,39 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* Trusted By Section */}
+        <section className="py-16 md:py-20 bg-white">
+          <div className="container-wide">
+            {/* Section Header */}
+            <div className="flex items-center gap-4 mb-12">
+              <div className="w-8 h-px bg-primary" />
+              <p className="text-sm uppercase tracking-[0.2em] text-stone font-semibold">
+                Trusted By
+              </p>
+            </div>
+
+            {/* Brand logos grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="flex items-center justify-center h-20 bg-sand rounded-xl opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <span className="text-charcoal/40 font-medium text-sm">
+                    Brand {i}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Story Section */}
-        <section className="py-20 md:py-32 bg-white">
+        <section className="py-20 md:py-32 bg-sand">
           <div className="container-wide">
             <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
               {/* Image */}

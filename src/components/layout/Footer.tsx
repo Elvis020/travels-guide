@@ -116,7 +116,7 @@ export function Footer() {
             </div>
             <p className="!text-white/50 text-sm">
               Share your adventure with{" "}
-              <span className="!text-primary">#NYCTravels</span>
+              <span className="!text-primary">#NYSTravels</span>
             </p>
           </div>
         </div>

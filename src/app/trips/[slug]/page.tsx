@@ -132,8 +132,10 @@ export default function TripDetailPage() {
                 </div>
               </section>
 
-              {/* Itinerary */}
-              <ItinerarySection itinerary={trip.itinerary} />
+              {/* Itinerary - only show for custom/private trips */}
+              {trip.category === "custom" && (
+                <ItinerarySection itinerary={trip.itinerary} />
+              )}
 
               {/* Includes/Excludes */}
               <IncludesExcludesSection included={trip.included} excluded={trip.excluded} />
@@ -680,7 +682,8 @@ function BookingCard({
   const totalPrice = trip.price * travelers;
 
   const isSoldOut = spotsRemaining === 0;
-  const canBook = !isSoldOut && daysUntilTrip > 0;
+  const deadlinePassed = trip.bookingDeadline && new Date(trip.bookingDeadline) < new Date();
+  const canBook = !isSoldOut && daysUntilTrip > 0 && !deadlinePassed;
 
   return (
     <div className="sticky top-24">
@@ -719,6 +722,23 @@ function BookingCard({
               </div>
             </div>
           </div>
+
+          {/* Booking deadline */}
+          {trip.bookingDeadline && (
+            <div className="flex items-center gap-3 p-3 bg-cream rounded-xl border border-sand">
+              <Clock className="w-5 h-5 text-secondary" />
+              <div>
+                <div className="text-sm text-stone">Book by</div>
+                <div className="font-medium text-ink">
+                  {new Date(trip.bookingDeadline).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Travelers selector */}
           <div>
@@ -761,16 +781,35 @@ function BookingCard({
             />
           )}
 
-          {/* Book button */}
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            disabled={!canBook}
-            className="mt-4"
-          >
-            {isSoldOut ? "Sold Out" : daysUntilTrip <= 0 ? "Trip Started" : "Book Now"}
-          </Button>
+          {/* Book button or deadline message */}
+          {deadlinePassed ? (
+            <div className="mt-4 p-4 bg-sand rounded-xl border border-stone/20">
+              <p className="text-sm font-semibold text-ink mb-1">
+                Booking has closed for this trip
+              </p>
+              <p className="text-xs text-charcoal/70 mb-3">
+                New dates are coming soon! Get notified when they're available.
+              </p>
+              <a
+                href="https://wa.me/1234567890?text=I'm%20interested%20in%20upcoming%20dates"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center w-full px-4 py-2 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+              >
+                Get Notified via WhatsApp
+              </a>
+            </div>
+          ) : (
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              disabled={!canBook}
+              className="mt-4"
+            >
+              {isSoldOut ? "Sold Out" : daysUntilTrip <= 0 ? "Trip Started" : "Book Now"}
+            </Button>
+          )}
 
           {/* Reassurance */}
           <p className="text-center text-sm text-stone">

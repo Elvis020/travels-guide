@@ -24,6 +24,7 @@ export const mockTrips: Trip[] = [
       end: "2024-03-19",
     },
     duration: 4,
+    bookingDeadline: "2024-02-13", // 30 days before trip starts
     price: 1299,
     originalPrice: 1499,
     currency: "USD",
@@ -165,6 +166,7 @@ export const mockTrips: Trip[] = [
       end: "2024-04-15",
     },
     duration: 5,
+    bookingDeadline: "2024-03-10", // 30 days before trip starts
     price: 899,
     currency: "USD",
     maxParticipants: 16,
@@ -296,6 +298,7 @@ export const mockTrips: Trip[] = [
       end: "2024-03-24",
     },
     duration: 2,
+    bookingDeadline: "2024-02-20", // 30 days before trip starts
     price: 449,
     currency: "USD",
     maxParticipants: 10,
@@ -384,6 +387,7 @@ export const mockTrips: Trip[] = [
       end: "2024-05-08",
     },
     duration: 7,
+    bookingDeadline: "2024-04-01", // 30 days before trip starts
     price: 2199,
     currency: "USD",
     maxParticipants: 8,
@@ -513,6 +517,7 @@ export const mockTrips: Trip[] = [
       end: "2024-04-11",
     },
     duration: 6,
+    bookingDeadline: "2024-03-05", // 30 days before trip starts
     price: 1899,
     currency: "USD",
     maxParticipants: 14,
@@ -635,6 +640,7 @@ export const mockTrips: Trip[] = [
       end: "2024-03-30",
     },
     duration: 1,
+    bookingDeadline: "2024-03-23", // 7 days before (short trip)
     price: 89,
     currency: "USD",
     maxParticipants: 15,

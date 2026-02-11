@@ -54,6 +54,7 @@ export interface Trip {
     end: string;
   };
   duration: number; // in days
+  bookingDeadline?: string; // ISO date string - deadline to book/pay deposit
   price: number;
   originalPrice?: number; // for showing discounts
   currency: string;

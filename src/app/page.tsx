@@ -20,11 +20,9 @@ import {
   Phone,
   MessageCircle,
   Calendar,
-
   Users,
   Clock,
   MapPin,
-
   Star,
   Mail,
   ChevronDown,
@@ -52,119 +50,117 @@ export default function Home() {
   useEffect(() => {
     // Dynamically import GSAP only when needed
     const loadAndInitGSAP = async () => {
-      const { gsap } = await import('gsap');
-      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
 
       gsap.registerPlugin(ScrollTrigger);
 
       const ctx = gsap.context(() => {
-      // Hero parallax
-      gsap.to('[data-speed="slow"]', {
-        y: 200,
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
-
-      gsap.to('[data-speed="fast"]', {
-        y: -100,
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
-
-      // Fade out hero text
-      gsap.to(".hero-text", {
-        opacity: 0,
-        y: -50,
-        scrollTrigger: {
-          trigger: ".hero-section",
-          start: "top top",
-          end: "50% top",
-          scrub: true,
-        },
-      });
-
-      // Horizontal scroll destinations
-      const destinationsSection = document.querySelector(
-        ".destinations-scroll",
-      );
-      if (destinationsSection) {
-        const destinations = gsap.utils.toArray(".destination-card");
-
-        gsap.to(destinations, {
-          xPercent: -100 * (destinations.length - 1),
-          ease: "none",
+        // Hero parallax
+        gsap.to('[data-speed="slow"]', {
+          y: 200,
           scrollTrigger: {
-            trigger: ".destinations-scroll",
-            pin: true,
-            scrub: 2,
-            snap: {
-              snapTo: 1 / (destinations.length - 1),
-              duration: 0.5,
-              ease: "power1.inOut",
-            },
-            end: () => `+=${window.innerHeight * 2}`,
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
           },
         });
-      }
 
-      // Scale images on scroll
-      gsap.utils.toArray(".scale-on-scroll").forEach((img: any) => {
-        gsap.fromTo(
-          img,
-          { scale: 1.2 },
-          {
-            scale: 1,
-            scrollTrigger: {
-              trigger: img,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
+        gsap.to('[data-speed="fast"]', {
+          y: -100,
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
           },
-        );
-      });
+        });
 
-      // Reveal text on scroll
-      gsap.utils.toArray(".reveal-text").forEach((text: any) => {
-        gsap.fromTo(
-          text,
-          { opacity: 0, y: 100 },
-          {
-            opacity: 1,
-            y: 0,
+        // Fade out hero text
+        gsap.to(".hero-text", {
+          opacity: 0,
+          y: -50,
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "50% top",
+            scrub: true,
+          },
+        });
+
+        // Horizontal scroll destinations
+        const destinationsSection = document.querySelector(
+          ".destinations-scroll",
+        );
+        if (destinationsSection) {
+          const destinations = gsap.utils.toArray(".destination-card");
+
+          gsap.to(destinations, {
+            xPercent: -100 * (destinations.length - 1),
+            ease: "none",
             scrollTrigger: {
-              trigger: text,
+              trigger: ".destinations-scroll",
+              pin: true,
+              scrub: 2,
+              snap: {
+                snapTo: 1 / (destinations.length - 1),
+                duration: 0.5,
+                ease: "power1.inOut",
+              },
+              end: () => `+=${window.innerHeight * 2}`,
+            },
+          });
+        }
+
+        // Scale images on scroll
+        gsap.utils.toArray(".scale-on-scroll").forEach((img: any) => {
+          gsap.fromTo(
+            img,
+            { scale: 1.2 },
+            {
+              scale: 1,
+              scrollTrigger: {
+                trigger: img,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            },
+          );
+        });
+
+        // Reveal text on scroll
+        gsap.utils.toArray(".reveal-text").forEach((text: any) => {
+          gsap.fromTo(
+            text,
+            { opacity: 0, y: 100 },
+            {
+              opacity: 1,
+              y: 0,
+              scrollTrigger: {
+                trigger: text,
+                start: "top 80%",
+                end: "top 50%",
+                scrub: true,
+              },
+            },
+          );
+        });
+
+        // Number counters
+        gsap.utils.toArray(".count-up").forEach((counter: any) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          gsap.to(counter, {
+            innerHTML: target,
+            duration: 2,
+            snap: { innerHTML: 1 },
+            scrollTrigger: {
+              trigger: counter,
               start: "top 80%",
-              end: "top 50%",
-              scrub: true,
             },
-          },
-        );
-      });
-
-      // Number counters
-      gsap.utils.toArray(".count-up").forEach((counter: any) => {
-        const target = parseInt(counter.getAttribute("data-target"));
-        gsap.to(counter, {
-          innerHTML: target,
-          duration: 2,
-          snap: { innerHTML: 1 },
-          scrollTrigger: {
-            trigger: counter,
-            start: "top 80%",
-          },
+          });
         });
-      });
-
-
       }, mainRef);
 
       return () => ctx.revert();
@@ -248,8 +244,8 @@ export default function Home() {
               </h1>
 
               <p className="mt-8 md:mt-12 max-w-lg text-lg text-ink/85 leading-relaxed font-light pl-2 border-l-2 border-primary/20">
-                Handpicked routes across Accra, Cape Coast, and the Volta region.
-                Fewer stops, deeper moments.
+                Handpicked routes across Accra, Cape Coast, and the Volta
+                region. Fewer stops, deeper moments.
               </p>
 
               {/* CTA Group */}
@@ -315,7 +311,9 @@ export default function Home() {
                   This Season
                 </div>
                 <p className="mt-2 text-xs text-charcoal/80">
-                  <span className="text-primary font-semibold">12 travelers</span>{" "}
+                  <span className="text-primary font-semibold">
+                    12 travelers
+                  </span>{" "}
                   joined the Cape Coast trip this week.
                 </p>
               </div>
@@ -329,7 +327,7 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
               <div className="reveal-text">
                 <h2 className="text-4xl md:text-6xl font-display text-ink leading-tight mb-6">
-                  Meet Nana Yaw Suspense
+                  Meet Nana Yaw Suspence
                 </h2>
                 <p className="text-xl text-charcoal mb-6 leading-relaxed">
                   Your guide to Ghana's soul. Watch this 2-minute introduction
@@ -357,7 +355,7 @@ export default function Home() {
                 <div className="relative aspect-video rounded-2xl overflow-hidden bg-ink shadow-2xl group cursor-pointer">
                   <Image
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop"
-                    alt="Nana Yaw Suspense"
+                    alt="Nana Yaw Suspence"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 768px) 100vw, 50vw"
@@ -376,6 +374,33 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════ TRUSTED BY ═══════════════ */}
+        <section className="relative py-16 md:py-20 bg-white">
+          <div className="container-wide">
+            {/* Section Header */}
+            <div className="flex items-center gap-4 mb-12">
+              <div className="w-8 h-px bg-primary" />
+              <p className="text-sm uppercase tracking-[0.2em] text-stone font-semibold">
+                Trusted By
+              </p>
+            </div>
+
+            {/* Brand logos grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-center h-20 bg-sand rounded-xl opacity-60 hover:opacity-100 transition-opacity"
+                >
+                  <span className="text-charcoal/40 font-medium text-sm">
+                    Brand {i}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -750,8 +775,6 @@ export default function Home() {
           </div>
         </section>
 
-
-
         {/* ═══════════════ TESTIMONIALS ═══════════════ */}
         <section
           id="testimonials"
@@ -828,9 +851,13 @@ export default function Home() {
                     <Calendar className="w-5 h-5 text-primary" />
                     <span className="font-semibold">March 15-22, 2026</span>
                   </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-4">
+                  <div className="flex items-center gap-2 text-charcoal mb-3">
                     <Users className="w-5 h-5 text-primary" />
                     <span>Small group (max 8)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
+                    <Clock className="w-4 h-4 text-secondary" />
+                    <span className="text-sm">Book by Feb 13, 2026</span>
                   </div>
 
                   <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
@@ -893,9 +920,13 @@ export default function Home() {
                     <Calendar className="w-5 h-5 text-primary" />
                     <span className="font-semibold">April 10-20, 2026</span>
                   </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-4">
+                  <div className="flex items-center gap-2 text-charcoal mb-3">
                     <Users className="w-5 h-5 text-primary" />
                     <span>Small group (max 8)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
+                    <Clock className="w-4 h-4 text-secondary" />
+                    <span className="text-sm">Book by Mar 10, 2026</span>
                   </div>
 
                   <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
@@ -958,9 +989,13 @@ export default function Home() {
                     <Calendar className="w-5 h-5 text-primary" />
                     <span className="font-semibold">May 2-6, 2026</span>
                   </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-4">
+                  <div className="flex items-center gap-2 text-charcoal mb-3">
                     <Users className="w-5 h-5 text-primary" />
                     <span>Small group (max 8)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
+                    <Clock className="w-4 h-4 text-secondary" />
+                    <span className="text-sm">Book by Apr 2, 2026</span>
                   </div>
 
                   <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
