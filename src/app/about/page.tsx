@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Seo } from '@/components/seo/Seo';
 import { Header, Footer } from '@/components/layout';
+import { AppImage as Image, Link } from '@/components/ui';
+import { buildBreadcrumbSchema, buildOrganizationSchema } from '@/lib/seo';
 import { Star, Users, Globe, Heart, Shield, Award } from 'lucide-react';
 
 export default function AboutPage() {
@@ -39,6 +40,18 @@ export default function AboutPage() {
 
   return (
     <>
+      <Seo
+        title="About NYS Travels"
+        description="Learn about NYS Travels, the team behind our guided Ghana tours, and the values shaping each curated travel experience."
+        path="/about"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+          ]),
+        ]}
+      />
       <Header />
       <main className="min-h-screen">
         {/* Hero Section */}
@@ -110,18 +123,23 @@ export default function AboutPage() {
             </div>
 
             {/* Brand logos grid */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
-              {[1, 2, 3, 4, 5].map((i) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+              {[
+                { name: "Pepsodent", id: "pepsodent" },
+                { name: "Swiss Embassy", id: "swiss-embassy" },
+                { name: "AEJ Travel and Tours", id: "aej-travel" },
+                { name: "Escape Accra", id: "escape-accra" },
+              ].map((brand, i) => (
                 <motion.div
-                  key={i}
+                  key={brand.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="flex items-center justify-center h-20 bg-sand rounded-xl opacity-60 hover:opacity-100 transition-opacity"
                 >
-                  <span className="text-charcoal/40 font-medium text-sm">
-                    Brand {i}
+                  <span className="font-brand text-charcoal text-lg md:text-xl tracking-wide">
+                    {brand.name}
                   </span>
                 </motion.div>
               ))}
@@ -132,20 +150,20 @@ export default function AboutPage() {
         {/* Story Section */}
         <section className="py-20 md:py-32 bg-sand">
           <div className="container-wide">
-            <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+            <div className="mx-auto grid max-w-6xl md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-12 md:gap-14 items-center">
               {/* Image */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7 }}
-                className="relative aspect-[4/5] rounded-2xl overflow-hidden"
+                className="relative mx-auto w-full max-w-[34rem] aspect-[4/5] rounded-2xl overflow-hidden justify-self-center"
               >
                 <Image
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop"
-                  alt="Nana Yaw"
+                  alt="Portrait of Nana Yaw, founder and lead guide at NYS Travels"
                   fill
-                  className="object-cover"
+                  className="scale-[1.16] object-cover object-center"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </motion.div>
@@ -156,6 +174,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7 }}
+                className="mx-auto w-full max-w-xl"
               >
                 <h2 className="text-4xl md:text-5xl font-display text-ink mb-6">
                   Meet Nana Yaw

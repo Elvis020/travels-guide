@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import dynamic from "next/dynamic";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Header, Footer, WhatsAppButton } from "@/components/layout";
 import { MasonryGrid } from "@/components/gallery";
+import { Seo } from "@/components/seo/Seo";
 
 // Lazy load Lightbox - only when user clicks an image
-const Lightbox = dynamic(() => import("@/components/gallery/Lightbox").then(mod => ({ default: mod.Lightbox })), {
-  ssr: false,
-});
+const Lightbox = lazy(() =>
+  import("@/components/gallery/Lightbox").then((mod) => ({ default: mod.Lightbox }))
+);
 import {
   galleryItems,
   getFeaturedGalleryItems,
   getGalleryTripNames,
 } from "@/data/gallery";
+import { buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo";
 import { Camera, MapPin, Sparkles } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -69,6 +70,18 @@ export default function GalleryPage() {
 
   return (
     <>
+      <Seo
+        title="Travel Gallery"
+        description="Browse the NYS Travels photo gallery featuring guided Ghana adventures, cultural experiences, wildlife encounters, and traveler moments."
+        path="/gallery"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Gallery", path: "/gallery" },
+          ]),
+        ]}
+      />
       <Header />
       <main className="min-h-screen bg-secondary">
         {/* Hero Section */}
@@ -176,15 +189,17 @@ export default function GalleryPage() {
       <WhatsAppButton phoneNumber="1234567890" />
 
       {/* Lightbox */}
-      <Lightbox
-        items={galleryItems}
-        currentIndex={lightboxIndex}
-        isOpen={lightboxOpen}
-        onClose={closeLightbox}
-        onNext={nextImage}
-        onPrev={prevImage}
-        onIndexChange={setLightboxIndex}
-      />
+      <Suspense fallback={null}>
+        <Lightbox
+          items={galleryItems}
+          currentIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={closeLightbox}
+          onNext={nextImage}
+          onPrev={prevImage}
+          onIndexChange={setLightboxIndex}
+        />
+      </Suspense>
     </>
   );
 }

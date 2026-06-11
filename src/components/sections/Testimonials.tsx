@@ -70,7 +70,7 @@ export function Testimonials() {
               { value: "2.5K", label: "Travelers" },
               { value: "98%", label: "Recommend" },
               { value: "50+", label: "Destinations" },
-            ].map((stat, index) => (
+            ].map((stat) => (
               <div key={stat.label} className="text-center lg:text-left">
                 <div className="text-4xl md:text-5xl font-display font-bold text-ink mb-1">
                   {stat.value}

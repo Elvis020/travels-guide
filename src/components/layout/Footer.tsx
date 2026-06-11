@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Instagram, Facebook, Twitter, Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { Link } from "@/components/ui";
+import { Instagram, Facebook, Twitter, Mail, Phone } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Footer Component - Safari Editorial
@@ -15,13 +14,6 @@ const navLinks = [
   { label: "Reviews", href: "/reviews" },
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "/contact" },
-];
-
-const tripLinks = [
-  { label: "Safari Adventures", href: "/trips?type=safari" },
-  { label: "Cultural Tours", href: "/trips?type=cultural" },
-  { label: "Beach Escapes", href: "/trips?type=beach" },
-  { label: "Custom Packages", href: "/trips/custom" },
 ];
 
 const legalLinks = [

@@ -68,8 +68,7 @@ export const useWishlistStore = create<WishlistState>()(
       },
 
       // Sync local wishlist to server after login
-      syncWithServer: async (userId: string) => {
-        const { items } = get();
+      syncWithServer: async (_userId: string) => {
         set({ isLoading: true });
 
         try {
@@ -115,7 +114,7 @@ export const useWishlistStore = create<WishlistState>()(
       },
 
       // Load wishlist from server (for returning users)
-      loadFromServer: async (userId: string) => {
+      loadFromServer: async (_userId: string) => {
         set({ isLoading: true });
 
         try {

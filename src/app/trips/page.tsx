@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Seo } from "@/components/seo/Seo";
 import { Header, Footer, WhatsAppButton } from "@/components/layout";
 import { TripCard } from "@/components/trips/TripCard";
 import { mockTrips, getAverageRating, getReviewsByTripId } from "@/data/trips";
+import { buildBreadcrumbSchema, buildOrganizationSchema, buildTripListSchema } from "@/lib/seo";
 import { MapPin, Compass } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -18,6 +20,19 @@ export default function TripsPage() {
 
   return (
     <>
+      <Seo
+        title="Ghana Trips and Group Departures"
+        description="Browse upcoming NYS Travels departures, featured adventures, and curated group trips across Ghana and beyond."
+        path="/trips"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildTripListSchema(mockTrips),
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Trips", path: "/trips" },
+          ]),
+        ]}
+      />
       <Header />
       <main>
         {/* Hero Section */}

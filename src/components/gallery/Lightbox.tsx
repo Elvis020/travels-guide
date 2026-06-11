@@ -7,10 +7,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  ZoomIn,
-  ZoomOut,
-  Download,
-  ExternalLink,
 } from "lucide-react";
 import type { GalleryItem } from "@/types";
 

@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { formatPrice, formatDateRange, getSpotsRemaining, isAlmostFull } from "@/lib/utils";
-import { Card, CardImage, CategoryBadge, DifficultyBadge, SpotsLeftBadge } from "@/components/ui";
+import { AppImage as Image, Card, CardImage, Link, SpotsLeftBadge } from "@/components/ui";
 import { useWishlistStore } from "@/stores/wishlist";
-import { Heart, Calendar, MapPin, Users, Clock, Star } from "lucide-react";
+import { UrgencyBadge } from "./UrgencyBadge";
+import { Heart, Calendar, MapPin, Users, Clock, Star, Check } from "lucide-react";
 import type { Trip } from "@/types";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -17,7 +16,7 @@ import type { Trip } from "@/types";
 
 interface TripCardProps {
   trip: Trip;
-  variant?: "default" | "featured" | "compact";
+  variant?: "default" | "featured" | "compact" | "departure";
   showWishlist?: boolean;
   rating?: number;
   reviewCount?: number;
@@ -34,6 +33,12 @@ export function TripCard({
   const isWishlisted = has(trip.id);
   const spotsRemaining = getSpotsRemaining(trip.maxParticipants, trip.currentBookings);
   const almostFull = isAlmostFull(trip.maxParticipants, trip.currentBookings);
+
+  // Calculate days until booking deadline
+  const daysUntilDeadline = trip.bookingDeadline
+    ? Math.ceil((new Date(trip.bookingDeadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+  const showUrgency = daysUntilDeadline !== null && daysUntilDeadline > 0 && daysUntilDeadline <= 90;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -61,6 +66,19 @@ export function TripCard({
         trip={trip}
         isWishlisted={isWishlisted}
         onWishlistToggle={handleWishlistToggle}
+      />
+    );
+  }
+
+  if (variant === "departure") {
+    return (
+      <DepartureTripCard
+        trip={trip}
+        spotsRemaining={spotsRemaining}
+        almostFull={almostFull}
+        showUrgency={showUrgency}
+        daysUntilDeadline={daysUntilDeadline}
+        showWishlist={showWishlist}
       />
     );
   }
@@ -106,6 +124,11 @@ export function TripCard({
                 </motion.button>
               )}
             </div>
+
+            {/* Corner Flag Badge */}
+            {showUrgency && daysUntilDeadline && (
+              <UrgencyBadge daysUntilDeadline={daysUntilDeadline} />
+            )}
 
             {/* Bottom overlay content */}
             <div className="text-white">
@@ -203,6 +226,12 @@ function FeaturedTripCard({
   rating,
   reviewCount,
 }: FeaturedTripCardProps) {
+  // Calculate days until booking deadline
+  const daysUntilDeadline = trip.bookingDeadline
+    ? Math.ceil((new Date(trip.bookingDeadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    : null;
+  const showUrgency = daysUntilDeadline !== null && daysUntilDeadline > 0 && daysUntilDeadline <= 90;
+
   return (
     <Link href={`/trips/${trip.slug}`} className="block group cursor-pointer">
       <Card className="overflow-hidden">
@@ -218,6 +247,10 @@ function FeaturedTripCard({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:bg-gradient-to-r" />
 
+            {/* Corner Flag Badge */}
+            {showUrgency && daysUntilDeadline && (
+              <UrgencyBadge daysUntilDeadline={daysUntilDeadline} />
+            )}
 
             {/* Wishlist */}
             <motion.button
@@ -392,6 +425,154 @@ function CompactTripCard({ trip, isWishlisted, onWishlistToggle }: CompactTripCa
           />
         </motion.button>
       </Card>
+    </Link>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Departure Trip Card (Booking-focused for homepage)
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface DepartureTripCardProps {
+  trip: Trip;
+  spotsRemaining: number;
+  almostFull: boolean;
+  showUrgency: boolean;
+  daysUntilDeadline: number | null;
+  showWishlist?: boolean;
+}
+
+function DepartureTripCard({
+  trip,
+  spotsRemaining,
+  almostFull,
+  showUrgency,
+  daysUntilDeadline,
+  showWishlist = true,
+}: DepartureTripCardProps) {
+  const { toggle, has } = useWishlistStore();
+  const isWishlisted = has(trip.id);
+  const isFullyBooked = spotsRemaining === 0;
+  const buttonText = isFullyBooked ? "Join Waitlist" : "Reserve My Spot";
+  const buttonBg = isFullyBooked ? "bg-stone" : "bg-primary";
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggle(trip.id);
+  };
+
+  return (
+    <Link href={`/trips/${trip.slug}`} className="block group cursor-pointer h-full">
+      <motion.div
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.2 }}
+        className="bg-cream rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow h-full flex flex-col"
+      >
+        {/* Image with badges */}
+        <div className="relative h-64">
+          <Image
+            src={trip.coverImage.url}
+            alt={trip.coverImage.alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+
+          {/* Urgency badge (top-left) */}
+          {showUrgency && daysUntilDeadline && (
+            <UrgencyBadge daysUntilDeadline={daysUntilDeadline} />
+          )}
+
+          {/* Top-right badges */}
+          <div className="absolute top-3 right-3 flex items-start gap-2">
+            {/* Spots remaining badge */}
+            {(almostFull || isFullyBooked) && (
+              <SpotsLeftBadge
+                spots={spotsRemaining}
+                maxSpots={trip.maxParticipants}
+              />
+            )}
+
+            {/* Wishlist button */}
+            {showWishlist && (
+              <motion.button
+                onClick={handleWishlistToggle}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={cn(
+                  "p-2 rounded-full backdrop-blur-sm transition-colors",
+                  isWishlisted
+                    ? "bg-primary text-white"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                )}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart
+                  className={cn("w-5 h-5", isWishlisted && "fill-current")}
+                />
+              </motion.button>
+            )}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 flex-1 flex flex-col">
+          {/* Title */}
+          <h3 className="font-display text-2xl text-ink mb-3 group-hover:text-primary transition-colors line-clamp-1">
+            {trip.title}
+          </h3>
+
+          {/* Location and Date - Side by Side */}
+          <div className="flex items-center gap-4 text-sm text-charcoal/70 mb-4">
+            <div className="flex items-center gap-1 min-w-0 flex-1">
+              <MapPin className="w-4 h-4 flex-shrink-0" />
+              <span className="truncate">{trip.destination}, {trip.country}</span>
+            </div>
+            <div className="flex items-center gap-1 min-w-0 flex-1">
+              <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="truncate">{formatDateRange(trip.dates.start, trip.dates.end)}</span>
+            </div>
+          </div>
+
+          {/* Group size */}
+          <div className="flex items-center gap-2 text-charcoal/70 mb-4">
+            <Users className="w-4 h-4 text-primary" />
+            <span>Small group (max {trip.maxParticipants})</span>
+          </div>
+
+          {/* Highlights (up to 4) */}
+          {trip.highlights.length > 0 && (
+            <div className="space-y-2 mb-6">
+              {trip.highlights.slice(0, 4).map((highlight, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-charcoal/80">{highlight}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Price */}
+          <div className="mt-auto mb-4">
+            <div className="text-4xl font-display text-primary font-bold">
+              {formatPrice(trip.price, trip.currency)}
+            </div>
+            <div className="text-sm text-charcoal/60">/person</div>
+          </div>
+
+          {/* CTA Button */}
+          <button
+            className={cn(
+              buttonBg,
+              "w-full py-4 text-white font-bold rounded-full transition-all hover:shadow-lg",
+              !isFullyBooked && "hover:bg-primary/90"
+            )}
+          >
+            {buttonText}
+          </button>
+        </div>
+      </motion.div>
     </Link>
   );
 }

@@ -20,11 +20,11 @@ export const mockTrips: Trip[] = [
     type: "international",
     category: "group",
     dates: {
-      start: "2024-03-15",
-      end: "2024-03-19",
+      start: "2026-04-15",
+      end: "2026-04-19",
     },
     duration: 4,
-    bookingDeadline: "2024-02-13", // 30 days before trip starts
+    bookingDeadline: "2026-03-15", // 30 days before trip starts
     price: 1299,
     originalPrice: 1499,
     currency: "USD",
@@ -162,11 +162,11 @@ export const mockTrips: Trip[] = [
     type: "international",
     category: "group",
     dates: {
-      start: "2024-04-10",
-      end: "2024-04-15",
+      start: "2026-05-10",
+      end: "2026-05-15",
     },
     duration: 5,
-    bookingDeadline: "2024-03-10", // 30 days before trip starts
+    bookingDeadline: "2026-04-10", // 30 days before trip starts
     price: 899,
     currency: "USD",
     maxParticipants: 16,
@@ -294,11 +294,11 @@ export const mockTrips: Trip[] = [
     type: "local",
     category: "group",
     dates: {
-      start: "2024-03-22",
-      end: "2024-03-24",
+      start: "2026-03-20",
+      end: "2026-03-22",
     },
     duration: 2,
-    bookingDeadline: "2024-02-20", // 30 days before trip starts
+    bookingDeadline: "2026-02-28", // 20 days before trip starts
     price: 449,
     currency: "USD",
     maxParticipants: 10,
@@ -383,11 +383,11 @@ export const mockTrips: Trip[] = [
     type: "international",
     category: "group",
     dates: {
-      start: "2024-05-01",
-      end: "2024-05-08",
+      start: "2026-06-01",
+      end: "2026-06-08",
     },
     duration: 7,
-    bookingDeadline: "2024-04-01", // 30 days before trip starts
+    bookingDeadline: "2026-05-01", // 30 days before trip starts
     price: 2199,
     currency: "USD",
     maxParticipants: 8,
@@ -513,11 +513,11 @@ export const mockTrips: Trip[] = [
     type: "international",
     category: "group",
     dates: {
-      start: "2024-04-05",
-      end: "2024-04-11",
+      start: "2026-05-05",
+      end: "2026-05-11",
     },
     duration: 6,
-    bookingDeadline: "2024-03-05", // 30 days before trip starts
+    bookingDeadline: "2026-04-05", // 30 days before trip starts
     price: 1899,
     currency: "USD",
     maxParticipants: 14,
@@ -636,11 +636,11 @@ export const mockTrips: Trip[] = [
     type: "local",
     category: "group",
     dates: {
-      start: "2024-03-30",
-      end: "2024-03-30",
+      start: "2026-04-23",
+      end: "2026-04-23",
     },
     duration: 1,
-    bookingDeadline: "2024-03-23", // 7 days before (short trip)
+    bookingDeadline: "2026-03-23", // 31 days before (gives urgency)
     price: 89,
     currency: "USD",
     maxParticipants: 15,
@@ -816,4 +816,13 @@ export function getAverageRating(tripId: string): number {
   if (reviews.length === 0) return 0;
   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
   return Math.round((sum / reviews.length) * 10) / 10;
+}
+
+export function getUpcomingTrips(): Trip[] {
+  const now = new Date();
+  return mockTrips.filter((trip) => {
+    const startDate = new Date(trip.dates.start);
+    const deadline = trip.bookingDeadline ? new Date(trip.bookingDeadline) : startDate;
+    return startDate > now && deadline > now;
+  });
 }

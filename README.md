@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NYS Travels Webapp
+
+Vite-powered React app for the NYS Travels tourist guide experience.
+
+## Architecture Snapshot
+
+This repo now runs as a client-rendered React SPA hosted from Vite build output.
+
+- `src/main.tsx` boots the app with `BrowserRouter`
+- `src/App.tsx` registers routes and lazy-loads route modules
+- Route components still live under `src/app/**` as a legacy folder convention
+- UI content currently comes from local mock data in `src/data/**`
+- Vercel is expected to host the static frontend, while future trusted backend work should live outside the SPA runtime
+
+### Current vs planned responsibilities
+
+**Current app responsibilities**
+- Marketing pages and trip discovery
+- Client-side routing
+- Booking request form UI
+- Guest wishlist persistence with Zustand + `localStorage`
+
+**Planned backend responsibilities**
+- Authentication when payment starts
+- Payment initialization and webhook handling
+- Transactional email and WhatsApp notifications
+- Itinerary/ticket delivery and other secret-bearing workflows
+
+The intended direction is `Vercel static frontend + Supabase data/auth + Edge Functions or another small backend for trusted operations`.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the local URL printed by Vite in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev      # Vite dev server
+npm run build    # Production build
+npm run preview  # Preview production build locally
+npm run lint     # ESLint
+```
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+- React 19
+- Vite 7
+- React Router DOM 7
+- Tailwind CSS v4
+- Framer Motion
+- GSAP + Lenis
+- Zustand
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The app boots from `src/main.tsx`, and route registration lives in `src/App.tsx`.
+- Most route components still live under `src/app/**` from the pre-Vite structure.
+- `src/components/ui/AppLink.tsx` and `src/components/ui/AppImage.tsx` provide small app-owned wrappers for internal links and image rendering.
+- Global fonts are loaded through CSS `@import` in `src/app/globals.css`.
+- There is no framework server runtime in this repo today. If a feature needs secrets, webhooks, or protected business logic, implement it outside the Vite client.

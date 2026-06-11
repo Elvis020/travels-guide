@@ -21,7 +21,7 @@ export default function SkipToBooking() {
       </div>
 
       {/* CSS keyframes for gentle floating */}
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%,
           100% {

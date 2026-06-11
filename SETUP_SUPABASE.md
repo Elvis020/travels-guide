@@ -1,6 +1,22 @@
 # Supabase Setup Guide
 
-This document outlines how to set up Supabase for the Tourist Guide application.
+This document outlines the recommended Supabase setup for the Tourist Guide application.
+
+## Architecture Context
+
+The app is now a Vite + React SPA, not a Next.js application.
+
+- Use `VITE_*` for client-exposed environment variables
+- Do not add Next.js route handlers, `next/server`, or App Router auth callbacks to this repo
+- Treat this repo as the frontend only
+- Put trusted operations such as payment webhooks, email sending, and secret-backed integrations in Supabase Edge Functions or another backend service
+
+Recommended split:
+
+- `tourist-guide-webapp` on Vercel for the static frontend
+- Supabase for Postgres, auth, storage, and optional Edge Functions
+- Payment provider webhooks handled outside the browser
+- Email/WhatsApp delivery handled outside the browser
 
 ## Prerequisites
 
@@ -25,8 +41,8 @@ This document outlines how to set up Supabase for the Tourist Guide application.
 
 1. Go to **Project Settings** → **API**
 2. Copy these values:
-   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon/public key` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `Project URL` → `VITE_SUPABASE_URL`
+   - `anon/public key` → `VITE_SUPABASE_ANON_KEY`
    - `service_role key` → `SUPABASE_SERVICE_ROLE_KEY` (keep secret!)
 
 ---
@@ -36,28 +52,28 @@ This document outlines how to set up Supabase for the Tourist Guide application.
 Create a `.env.local` file in the project root:
 
 ```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+# Client-safe Supabase config for the Vite app
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Server-only secrets for Edge Functions or another backend
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
-
-# Payment Provider (Ratecardly)
-RATECARDLY_API_KEY=your-ratecardly-key
-RATECARDLY_SECRET_KEY=your-ratecardly-secret
-
-# Email (Resend)
+PAYMENT_PROVIDER_SECRET_KEY=your-secret-here
 RESEND_API_KEY=your-resend-api-key
+WHATSAPP_API_TOKEN=your-whatsapp-token
 
-# App URL (for callbacks)
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+# Public app URL
+VITE_APP_URL=http://localhost:5173
 ```
+
+Do not expose service-role, payment, email, or WhatsApp secrets to the Vite app bundle.
 
 ---
 
 ## 4. Install Supabase Client
 
 ```bash
-npm install @supabase/supabase-js @supabase/ssr
+npm install @supabase/supabase-js
 ```
 
 ---
@@ -335,42 +351,30 @@ CREATE INDEX gallery_featured_idx ON public.gallery(featured);
 Create `src/lib/db/supabase.ts`:
 
 ```typescript
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from "@supabase/supabase-js";
 
-export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-}
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 ```
 
-Create `src/lib/db/supabase-server.ts`:
+Recommended notes:
+
+- Keep this in the frontend only for browser-safe operations
+- Use row-level security for all user-scoped tables
+- Keep any privileged writes in Edge Functions or another backend
+
+If you prefer a small helper instead of a singleton:
 
 ```typescript
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from "@supabase/supabase-js";
 
-export async function createServerSupabaseClient() {
-  const cookieStore = await cookies()
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options })
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
+export function createSupabaseClient() {
+  return createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY
+  );
 }
 ```
 
@@ -393,26 +397,17 @@ export async function createServerSupabaseClient() {
    - Reset password
    - Magic link
 
-### Auth Callback Route
+### Auth Strategy For This Repo
 
-Create `src/app/auth/callback/route.ts`:
+Because this app is a Vite SPA, do not create a server callback route inside `src/app/**`.
 
-```typescript
-import { createServerSupabaseClient } from '@/lib/db/supabase-server'
-import { NextResponse } from 'next/server'
+Recommended options:
 
-export async function GET(request: Request) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
+1. Use Supabase client auth directly in the browser for email OTP, magic link, or OAuth
+2. Configure Supabase redirect URLs to point to frontend routes such as `/book`, `/wishlist`, or a dedicated `/auth/callback` page component
+3. If you need secure session exchange or provider-specific server handling, do that in Supabase Edge Functions or another backend service
 
-  if (code) {
-    const supabase = await createServerSupabaseClient()
-    await supabase.auth.exchangeCodeForSession(code)
-  }
-
-  return NextResponse.redirect(requestUrl.origin)
-}
-```
+For the current roadmap, auth should be introduced at payment time rather than across the whole browsing experience.
 
 ---
 
@@ -444,9 +439,18 @@ CREATE POLICY "Users can upload avatars"
 
 ---
 
-## 9. Edge Functions (Optional)
+## 9. Edge Functions (Recommended For Trusted Workflows)
 
-For server-side operations like payment webhooks:
+Use Edge Functions or another backend for:
+
+- Payment initialization if the provider secret must be hidden
+- Payment webhooks
+- Post-payment booking confirmation
+- Transactional email sending
+- WhatsApp itinerary or reminder delivery
+- Admin-only updates
+
+Supabase Edge Functions example flow:
 
 ```bash
 # Install Supabase CLI
@@ -465,6 +469,13 @@ supabase functions new payment-webhook
 supabase functions deploy payment-webhook
 ```
 
+Suggested function boundaries:
+
+- `create-payment-session`
+- `payment-webhook`
+- `send-booking-confirmation`
+- `deliver-itinerary`
+
 ---
 
 ## 10. Testing Connection
@@ -472,22 +483,19 @@ supabase functions deploy payment-webhook
 Add this to any page to test:
 
 ```typescript
-'use client'
-
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/db/supabase'
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/db/supabase";
 
 export default function TestPage() {
-  const [trips, setTrips] = useState([])
+  const [trips, setTrips] = useState([]);
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.from('trips').select('*').then(({ data }) => {
-      setTrips(data || [])
-    })
-  }, [])
+    supabase.from("trips").select("*").then(({ data }) => {
+      setTrips(data || []);
+    });
+  }, []);
 
-  return <pre>{JSON.stringify(trips, null, 2)}</pre>
+  return <pre>{JSON.stringify(trips, null, 2)}</pre>;
 }
 ```
 
@@ -500,7 +508,8 @@ export default function TestPage() {
 1. **"relation does not exist"** → Run the SQL schema commands
 2. **"permission denied"** → Check RLS policies
 3. **"Invalid API key"** → Verify `.env.local` values
-4. **Auth not working** → Check redirect URLs in Supabase dashboard
+4. **Auth not working** → Check redirect URLs in the Supabase dashboard and confirm they point to frontend routes, not Next.js handlers
+5. **Webhook failures** → Verify your Edge Function or backend secret configuration instead of debugging in the browser
 
 ### Useful Commands
 
@@ -520,7 +529,8 @@ ALTER TABLE public.trips DISABLE ROW LEVEL SECURITY;
 
 ## Next Steps
 
-1. Set up Ratecardly payment integration
-2. Configure Resend for transactional emails
-3. Implement QR code generation for tickets
-4. Set up PDF generation for tickets
+1. Add a real `src/lib/db/supabase.ts` client when data work starts
+2. Move wishlist sync from placeholder logic to Supabase-backed persistence
+3. Implement payment flow through Edge Functions or another trusted backend
+4. Add transactional email and WhatsApp delivery outside the SPA
+5. Introduce auth only at checkout or payment boundaries

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
+
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -45,7 +47,8 @@
 
   /* Typography */
   --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Work Sans', system-ui, sans-serif;
+  --font-body: 'Lato', system-ui, sans-serif;
+  --font-brand: 'Playfair Display', Georgia, serif;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -104,6 +107,7 @@
   --color-error: var(--color-error);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+  --font-brand: var(--font-brand);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -141,6 +145,10 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#root {
+  min-height: 100vh;
 }
 
 /* Subtle noise texture */

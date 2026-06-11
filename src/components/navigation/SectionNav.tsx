@@ -16,7 +16,7 @@ interface Section {
 
 const sections: Section[] = [
   { id: "hero", label: "Welcome", number: "00" },
-  { id: "video-intro", label: "Meet Nana Yaw", number: "01" },
+  { id: "meet-nana", label: "Meet Nana Yaw", number: "01" },
   { id: "how-it-works", label: "Booking Process", number: "02" },
   { id: "sample-itinerary", label: "Itinerary", number: "03" },
   { id: "gallery", label: "Travelers", number: "04" },
@@ -84,7 +84,7 @@ export default function SectionNav() {
           className="fixed left-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
         >
           <div className="relative flex flex-col gap-0">
-            {sections.map((section, index) => {
+            {sections.map((section) => {
               const isActive = activeSection === section.id;
               const isHovered = hoveredSection === section.id;
 

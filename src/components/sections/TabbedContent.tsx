@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/components/ui";
 import {
   Star,
   MapPin,
@@ -10,13 +10,10 @@ import {
   Users,
   ArrowRight,
   Heart,
-  Quote,
   Calendar,
   TrendingUp,
   Award,
   Verified,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { mockTrips } from "@/data/trips";
 import type { Trip } from "@/types";

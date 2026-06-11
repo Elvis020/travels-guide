@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Seo } from "@/components/seo/Seo";
 import { Header, Footer, WhatsAppButton } from "@/components/layout";
 import {
   Button,
   Badge,
   CategoryBadge,
   DifficultyBadge,
+  Link,
   SpotsLeftBadge,
 } from "@/components/ui";
 import { TripCard } from "@/components/trips/TripCard";
@@ -21,6 +22,11 @@ import {
 } from "@/data/trips";
 import { useWishlistStore } from "@/stores/wishlist";
 import { cn } from "@/lib/utils";
+import {
+  buildBreadcrumbSchema,
+  buildOrganizationSchema,
+  buildTripSchema,
+} from "@/lib/seo";
 import {
   formatPrice,
   formatDateRange,
@@ -42,7 +48,6 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Play,
   Utensils,
   Bed,
   ArrowRight,
@@ -58,10 +63,7 @@ export default function TripDetailPage() {
   const slug = params.slug as string;
   const trip = getTripBySlug(slug);
 
-  // Scroll to top on page load
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [slug]);
+  // Auto-scroll removed - let user maintain scroll position
 
   if (!trip) {
     return <TripNotFound />;
@@ -80,6 +82,22 @@ export default function TripDetailPage() {
 
   return (
     <>
+      <Seo
+        title={trip.title}
+        description={trip.shortDescription}
+        path={`/trips/${trip.slug}`}
+        image={trip.coverImage.url}
+        type="article"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildTripSchema(trip, reviews, averageRating),
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Trips", path: "/trips" },
+            { name: trip.title, path: `/trips/${trip.slug}` },
+          ]),
+        ]}
+      />
       <Header />
       <main>
         {/* Hero Gallery */}
@@ -137,8 +155,10 @@ export default function TripDetailPage() {
                 <ItinerarySection itinerary={trip.itinerary} />
               )}
 
-              {/* Includes/Excludes */}
-              <IncludesExcludesSection included={trip.included} excluded={trip.excluded} />
+              {/* Includes/Excludes - only show for group trips */}
+              {trip.category !== "custom" && (
+                <IncludesExcludesSection included={trip.included} excluded={trip.excluded} />
+              )}
 
               {/* Meeting Point */}
               <section>
@@ -723,22 +743,35 @@ function BookingCard({
             </div>
           </div>
 
-          {/* Booking deadline */}
-          {trip.bookingDeadline && (
-            <div className="flex items-center gap-3 p-3 bg-cream rounded-xl border border-sand">
-              <Clock className="w-5 h-5 text-secondary" />
-              <div>
-                <div className="text-sm text-stone">Book by</div>
-                <div className="font-medium text-ink">
-                  {new Date(trip.bookingDeadline).toLocaleDateString("en-US", {
+          {/* Booking deadline - urgency badge */}
+          {trip.bookingDeadline && (() => {
+            const daysUntilDeadline = Math.ceil(
+              (new Date(trip.bookingDeadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+            );
+            const isUrgent = daysUntilDeadline <= 14;
+
+            return (
+              <div className={`p-4 rounded-xl border-2 ${
+                isUrgent
+                  ? 'bg-primary/10 border-primary'
+                  : 'bg-secondary/5 border-secondary/20'
+              }`}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Clock className={`w-5 h-5 ${isUrgent ? 'text-primary' : 'text-secondary'}`} />
+                  <span className={`font-bold text-sm ${isUrgent ? 'text-primary' : 'text-secondary'}`}>
+                    {daysUntilDeadline > 0 ? `Only ${daysUntilDeadline} days left to book!` : 'Booking closed'}
+                  </span>
+                </div>
+                <p className="text-xs text-charcoal/70">
+                  Deadline: {new Date(trip.bookingDeadline).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                     year: "numeric",
                   })}
-                </div>
+                </p>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Travelers selector */}
           <div>
@@ -838,6 +871,12 @@ function BookingCard({
 function TripNotFound() {
   return (
     <>
+      <Seo
+        title="Trip Not Found"
+        description="The trip you were looking for could not be found. Explore other curated adventures from NYS Travels."
+        path="/trips"
+        noindex
+      />
       <Header />
       <main className="pt-20 min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center px-4">

@@ -9,7 +9,7 @@ import {
   useSpring,
   AnimatePresence,
 } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/components/ui";
 import { Star, MapPin, Users, Play, ArrowRight } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════

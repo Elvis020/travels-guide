@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/components/ui";
 import { Phone, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════

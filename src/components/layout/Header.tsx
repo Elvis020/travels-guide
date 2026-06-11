@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useWishlistStore } from "@/stores/wishlist";
 import {
@@ -11,7 +11,6 @@ import {
   X,
   Heart,
   User,
-  Phone,
 } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -28,7 +27,7 @@ const navItems = [
 ];
 
 export function Header() {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const wishlistCount = useWishlistStore((state) => state.items.length);

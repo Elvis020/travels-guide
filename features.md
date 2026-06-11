@@ -1,21 +1,48 @@
 This file is going to be used for request features and updates...make sure to keep progress on it.
 
-## Request 1
-  - The "How it works" section is for "Private tour / Request a guide" people, so we should add that ability.
-  - This is where the $50 dollars comes into play for customised itenary
-  - With the "Customise my itenary" question on FAQ, it should take them to the book a private tour.
-  - Once, someone pays and confirms payment, the itenary is sent to the email and the platform sends their details on email or on whatsapp(remember to add where the user want to be contacted from during the customised itenary form filling process)
-  - For customised trips, remove: What's Included and What's not
-  - The budget will be in ranges
-## Request 2
-  - For the book a trip section(that we will be creating), let's Add payment deadline
-## Request 3
-  - For normal trips, don’t include day-by-day iternary
-## Request 4
-  - User might come on page and see a package available and want to join. It’s based on the number we get before the deadline.
-## Request 5
-  - Add a section for the brands he has worked with…it’s like 3 and more.
-## Request 6
-  - In case where a package has reached a deadline, users should know that there is another one coming and they should be patient.
-## Request 7
-  - Users only sign-in when they are making payments
+## Architecture Notes
+
+- Frontend runtime is now `React + Vite` with `BrowserRouter`
+- Vercel should be treated as static frontend hosting for this app
+- Planned trusted workflows such as payments, auth-at-payment, notifications, and itinerary delivery should be implemented in Supabase and/or external backend functions, not directly in the SPA
+- Supabase docs in this repo should use `VITE_*` env vars and frontend route callbacks rather than Next.js server handlers
+
+## Request 1 - Custom Booking Flow [IN PROGRESS]
+  - ✅ Created custom booking form page at `/book` with all required fields
+  - ✅ Added budget range selector (4 ranges: $500-1K, $1K-2K, $2K-5K, $5K+)
+  - ✅ Added contact preference selector (Email/WhatsApp)
+  - ✅ For customised trips, removed "What's Included" and "What's not" sections
+  - ✅ Updated FAQ "Customise my itenary" question to link to `/book?custom=true`
+  - ⏳ **PENDING**: Payment integration for $50 deposit (Stripe/Paystack)
+  - ⏳ **PENDING**: Email/WhatsApp notification system after payment confirmation
+  - ⏳ **PENDING**: Itinerary delivery system via email/WhatsApp
+
+  **Note**: Form flow is complete. Payment integration on hold - will continue later.
+
+## Request 2 - Payment Deadline [PARTIAL]
+  - ⏳ For the book a trip section(that we will be creating), let's Add payment deadline
+  - ✅ Added urgency badges showing "Xd left" on trip cards
+  - ✅ Added booking deadline display in trip detail booking card
+
+## Request 3 - Hide Day-by-Day Itinerary for Normal Trips [COMPLETE]
+  - ✅ Day-by-day itinerary now only shows for `trip.category === "custom"`
+
+## Request 4 - Join Available Packages [COMPLETE]
+  - ✅ Departure cards show "Reserve My Spot" button
+  - ✅ Spots remaining badges visible when almost full
+  - ✅ Users can select number of travelers before booking
+
+## Request 5 - Brands Section [COMPLETE]
+  - ✅ "Trusted By" section on homepage with brands:
+    - Pepsodent
+    - Swiss Embassy
+    - AEJ Travel and Tours
+    - Escape Accra
+
+## Request 6 - Deadline Passed Messaging [COMPLETE]
+  - ✅ Trip detail page shows "New dates coming soon" when deadline passed
+  - ✅ Includes WhatsApp notification signup option
+
+## Request 7 - Auth Only for Payments [PENDING]
+  - ⏳ Users only sign-in when they are making payments
+  - **Note**: Will implement with payment integration

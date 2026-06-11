@@ -1,14 +1,15 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+import { Seo } from "@/components/seo/Seo";
 import { Header, Footer, WhatsAppButton } from "@/components/layout";
-import { Button } from "@/components/ui";
+import { Button, Link } from "@/components/ui";
 import { TripCard } from "@/components/trips/TripCard";
 import { useWishlistStore, useWishlistTrips } from "@/stores/wishlist";
 import { getAverageRating, getReviewsByTripId, getFeaturedTrips } from "@/data/trips";
 import { formatPrice } from "@/lib/utils";
-import { Heart, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { buildBreadcrumbSchema } from "@/lib/seo";
+import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Wishlist Page
@@ -23,6 +24,16 @@ export default function WishlistPage() {
 
   return (
     <>
+      <Seo
+        title="Saved Trips Wishlist"
+        description="Review and manage your saved NYS Travels trips before you book your next Ghana adventure."
+        path="/wishlist"
+        noindex
+        jsonLd={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Wishlist", path: "/wishlist" },
+        ])}
+      />
       <Header />
       <main className="min-h-screen bg-cream">
         {/* Page Header */}
@@ -212,7 +223,7 @@ function EmptyWishlist() {
           }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {featuredTrips.map((trip, index) => (
+                  {featuredTrips.map((trip) => (
             <motion.div
               key={trip.id}
               variants={{

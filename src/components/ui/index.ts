@@ -28,6 +28,12 @@ export {
 // Input
 export { Input, Textarea, Select } from "./Input";
 
+// Image
+export { AppImage } from "./AppImage";
+
+// Link
+export { Link } from "./AppLink";
+
 // Skeleton (coming soon)
 // export { Skeleton } from "./Skeleton";
 

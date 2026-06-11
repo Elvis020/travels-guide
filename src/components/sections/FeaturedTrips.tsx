@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui";
 import { TripCard } from "@/components/trips/TripCard";
 import { getFeaturedTrips, getAverageRating, getReviewsByTripId } from "@/data/trips";
 import { ArrowRight, Sparkles } from "lucide-react";

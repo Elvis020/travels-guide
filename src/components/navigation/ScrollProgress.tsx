@@ -5,7 +5,7 @@ import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
 /**
  * Scroll Progress Bar - Below header indicator
- * Shows % completion after reaching video intro section
+ * Shows % completion after reaching the guide intro section
  */
 export default function ScrollProgress() {
   const [headerHeight, setHeaderHeight] = useState(96);
@@ -18,13 +18,13 @@ export default function ScrollProgress() {
   });
 
   const ticking = useRef(false);
-  const videoIntroOffset = useRef<number | null>(null);
+  const guideIntroOffset = useRef<number | null>(null);
 
   useEffect(() => {
-    // Cache video intro section offset on mount
-    const videoIntroSection = document.getElementById('video-intro');
-    if (videoIntroSection) {
-      videoIntroOffset.current = videoIntroSection.offsetTop;
+    // Cache guide intro section offset on mount
+    const guideIntroSection = document.getElementById('meet-nana');
+    if (guideIntroSection) {
+      guideIntroOffset.current = guideIntroSection.offsetTop;
     }
   }, []);
 
@@ -34,11 +34,11 @@ export default function ScrollProgress() {
       setHeaderHeight(header.offsetHeight);
     }
 
-    // Show progress bar when scrolled past video intro section
-    if (videoIntroOffset.current) {
+    // Show progress bar when scrolled past guide intro section
+    if (guideIntroOffset.current) {
       const scrollY = window.scrollY;
       const viewportMid = window.innerHeight / 2;
-      setIsVisible(scrollY + viewportMid >= videoIntroOffset.current);
+      setIsVisible(scrollY + viewportMid >= guideIntroOffset.current);
     }
 
     ticking.current = false;

@@ -1,19 +1,28 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { Seo } from "@/components/seo/Seo";
 import { Header, Footer } from "@/components/layout";
+import { AppImage as Image } from "@/components/ui";
 import { reviews } from "@/data/reviews";
+import { buildBreadcrumbSchema, buildOrganizationSchema } from "@/lib/seo";
 import { Star, Quote } from "lucide-react";
 
 export default function ReviewsPage() {
-  // Calculate average rating
-  const averageRating = (
-    reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-  ).toFixed(1);
-
   return (
     <>
+      <Seo
+        title="Traveler Reviews"
+        description="Read traveler reviews and testimonials from guests who explored Ghana with NYS Travels across cultural, coastal, and wildlife experiences."
+        path="/reviews"
+        jsonLd={[
+          buildOrganizationSchema(),
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Reviews", path: "/reviews" },
+          ]),
+        ]}
+      />
       <Header />
       <main className="min-h-screen bg-cream">
         {/* Hero Section */}
@@ -34,7 +43,7 @@ export default function ReviewsPage() {
                 }}
                 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-[1.05] mb-6"
               >
-                Traveler
+                <span className="!text-white">Traveler</span>
                 <span className="text-primary pl-2">Reviews</span>
               </motion.h1>
 

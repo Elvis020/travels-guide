@@ -2,29 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import {
-  ScrollProgress,
-  FloatingCTA,
-  SkipToBooking,
-} from "@/components/navigation";
-import FeaturedTrips from "@/components/sections/FeaturedTrips";
-import { ReviewsCarousel } from "@/components/sections/ReviewsCarousel";
+import { AppImage as Image, Link } from "@/components/ui";
+import { FloatingCTA } from "@/components/navigation";
+import { ReviewsTeaser } from "@/components/sections/ReviewsTeaser";
 import HowItWorks from "@/components/sections/HowItWorks";
+import { TripCard } from "@/components/trips/TripCard";
+import { Seo } from "@/components/seo/Seo";
+import { getFeaturedFAQs } from "@/data/faqs";
 import { getFeaturedReviews } from "@/data/reviews";
+import { getUpcomingTrips, getAverageRating, getReviewsByTripId } from "@/data/trips";
+import { buildOrganizationSchema, buildWebsiteSchema } from "@/lib/seo";
 import {
-  Play,
   Check,
-  Phone,
-  MessageCircle,
-  Calendar,
-  Users,
-  Clock,
   MapPin,
-  Star,
-  Mail,
   ChevronDown,
   ArrowRight,
 } from "lucide-react";
@@ -46,6 +37,8 @@ import {
 export default function Home() {
   const mainRef = useRef<HTMLElement>(null);
   const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
+  const upcomingTrips = getUpcomingTrips().slice(0, 3);
+  const faqs = getFeaturedFAQs();
 
   useEffect(() => {
     // Dynamically import GSAP only when needed
@@ -88,30 +81,6 @@ export default function Home() {
             scrub: true,
           },
         });
-
-        // Horizontal scroll destinations
-        const destinationsSection = document.querySelector(
-          ".destinations-scroll",
-        );
-        if (destinationsSection) {
-          const destinations = gsap.utils.toArray(".destination-card");
-
-          gsap.to(destinations, {
-            xPercent: -100 * (destinations.length - 1),
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".destinations-scroll",
-              pin: true,
-              scrub: 2,
-              snap: {
-                snapTo: 1 / (destinations.length - 1),
-                duration: 0.5,
-                ease: "power1.inOut",
-              },
-              end: () => `+=${window.innerHeight * 2}`,
-            },
-          });
-        }
 
         // Scale images on scroll
         gsap.utils.toArray(".scale-on-scroll").forEach((img: any) => {
@@ -169,53 +138,15 @@ export default function Home() {
     loadAndInitGSAP();
   }, []);
 
-  const faqs = [
-    {
-      question: "Is Ghana safe for solo travelers?",
-      answer:
-        "Absolutely! Ghana is one of the safest countries in West Africa. I personally escort all tours, and we stay in secure, vetted accommodations. Ghana's people are famously welcoming to visitors.",
-    },
-    {
-      question: "What vaccinations do I need?",
-      answer:
-        "Yellow fever vaccination is required for entry. I recommend also getting hepatitis A, typhoid, and routine vaccinations. I'll send you a complete health prep guide after booking.",
-    },
-    {
-      question: "What's included in the tour price?",
-      answer:
-        "All accommodations, ground transportation, guided tours, most meals, entrance fees, and airport transfers. NOT included: international flights, travel insurance, tips, and personal expenses.",
-    },
-    {
-      question: "What if I need to cancel?",
-      answer:
-        "The $50 deposit is non-refundable but transferable to another traveler. For full payment cancellations: 60+ days = 75% refund, 30-59 days = 50% refund, under 30 days = no refund. Travel insurance is highly recommended.",
-    },
-    {
-      question: "Can I customize my itinerary?",
-      answer:
-        "Yes! After your deposit, we'll have a video call to tailor the itinerary to your interests. Want more wildlife? More culture? Beach time? We'll make it yours.",
-    },
-    {
-      question: "How many people per tour?",
-      answer:
-        "I keep groups small - maximum 8 travelers for personalized attention. Private tours for couples/families are also available.",
-    },
-    {
-      question: "What's the weather like?",
-      answer:
-        "Ghana has two seasons: dry (November-March) with 85-90°F and humid rainy (April-October). Best time to visit is November-February for wildlife viewing and comfortable weather.",
-    },
-    {
-      question: "Do I need a visa?",
-      answer:
-        "US citizens need a visa to enter Ghana. I'll provide detailed instructions and support for the application process after booking.",
-    },
-  ];
-
   return (
     <>
+      <Seo
+        title="Unforgettable Ghana Adventures"
+        description="Discover curated Ghana tours, private itineraries, and event-based travel experiences with NYS Travels. Explore cultural landmarks, wildlife escapes, and coastal adventures with local guidance."
+        path="/"
+        jsonLd={[buildOrganizationSchema(), buildWebsiteSchema()]}
+      />
       <Header />
-      <ScrollProgress />
       <FloatingCTA />
       <main ref={mainRef} className="overflow-hidden">
         {/* ═══════════════ HERO ═══════════════ */}
@@ -243,22 +174,33 @@ export default function Home() {
                 </span>
               </h1>
 
-              <p className="mt-8 md:mt-12 max-w-lg text-lg text-ink/85 leading-relaxed font-light pl-2 border-l-2 border-primary/20">
-                Handpicked routes across Accra, Cape Coast, and the Volta
-                region. Fewer stops, deeper moments.
+              <p className="mt-8 md:mt-12 max-w-xl text-lg text-ink/85 leading-relaxed font-light pl-2 border-l-2 border-primary/20">
+                We are Ghana&apos;s leading curators of event-based travel and
+                private tours. From the rugged beauty of the Wli Waterfalls to
+                the VVIP front row of the Detty December concerts, we handle
+                the logistics so you can focus on the memories. With a network
+                of over 2 million digital reach and a commitment to cultural
+                impact, NYS Travels is the official way to see Ghana.
               </p>
 
               {/* CTA Group */}
               <div className="mt-10 md:mt-14 flex flex-col sm:flex-row items-start sm:items-center gap-6 pl-2">
                 <Link
                   href="/trips"
-                  className="group relative inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-full overflow-hidden transition-transform hover:scale-105 hover:shadow-lg hover:shadow-primary/20"
+                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-white shadow-[0_10px_24px_rgba(232,106,51,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-dark"
                 >
-                  <span className="relative z-10 font-bold tracking-wide text-sm uppercase">
+                  <span className="font-bold tracking-wide text-sm uppercase">
                     Find your trip
                   </span>
-                  <ArrowRight className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+
+                <Link
+                  href="#meet-nana"
+                  className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-secondary transition-all duration-300 hover:gap-3 hover:text-primary"
+                >
+                  Meet your guide
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
 
@@ -300,7 +242,7 @@ export default function Home() {
                     >
                       <Image
                         src={`https://i.pravatar.cc/100?img=${i + 10}`}
-                        alt="Traveler"
+                        alt={`Portrait of happy NYS Travels guest ${i}`}
                         width={32}
                         height={32}
                       />
@@ -321,18 +263,18 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════════════ VIDEO INTRODUCTION ═══════════════ */}
-        <section id="video-intro" className="relative py-20 md:py-32 bg-cream">
+        {/* ═══════════════ MEET NANA ═══════════════ */}
+        <section id="meet-nana" className="relative py-24 md:py-32 bg-cream">
           <div className="container-wide">
-            <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-              <div className="reveal-text">
+            <div className="mx-auto grid max-w-6xl md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-10 md:gap-12 items-center">
+              <div className="reveal-text max-w-2xl">
                 <h2 className="text-4xl md:text-6xl font-display text-ink leading-tight mb-6">
                   Meet Nana Yaw Suspence
                 </h2>
                 <p className="text-xl text-charcoal mb-6 leading-relaxed">
-                  Your guide to Ghana's soul. Watch this 2-minute introduction
-                  to understand why hundreds of travelers trust me with their
-                  African adventure.
+                  Your guide to Ghana&apos;s soul. Meet the person shaping each
+                  route, handling the details, and helping travelers experience
+                  the country with confidence.
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-earth">
                   <div className="flex items-center gap-2">
@@ -350,57 +292,99 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Video Placeholder */}
-              <div className="reveal-text">
-                <div className="relative aspect-video rounded-2xl overflow-hidden bg-ink shadow-2xl group cursor-pointer">
+              {/* Portrait */}
+              <div className="reveal-text flex justify-center md:justify-center">
+                <div className="group relative aspect-[2/3] w-full max-w-[420px] overflow-hidden rounded-[32px] bg-ink shadow-2xl">
                   <Image
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=450&fit=crop"
-                    alt="Nana Yaw Suspence"
+                    src="/images/nana-yaw.webp"
+                    alt="Nana Yaw Suspence, founder and guide at NYS Travels"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 90vw, 420px"
                   />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-white text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-red-500" />
-                      <span>2:15 - Introduction Video</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ═══════════════ TRUSTED BY ═══════════════ */}
-        <section className="relative py-16 md:py-20 bg-white">
+        {/* ═══════════════ SPONSORS & PARTNERS ═══════════════ */}
+        <section className="relative overflow-hidden bg-white py-20 md:py-24">
+          <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-sand/70 to-transparent md:block" />
           <div className="container-wide">
-            {/* Section Header */}
-            <div className="flex items-center gap-4 mb-12">
-              <div className="w-8 h-px bg-primary" />
-              <p className="text-sm uppercase tracking-[0.2em] text-stone font-semibold">
-                Trusted By
-              </p>
-            </div>
-
-            {/* Brand logos grid */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-center h-20 bg-sand rounded-xl opacity-60 hover:opacity-100 transition-opacity"
-                >
-                  <span className="text-charcoal/40 font-medium text-sm">
-                    Brand {i}
+            <div className="relative grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
+              <div className="max-w-xl">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="h-px w-10 bg-primary" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                    Sponsors & Partners
                   </span>
                 </div>
-              ))}
+                <h2 className="mb-4 font-display text-4xl leading-tight text-ink md:text-5xl">
+                  Supported by names travelers already trust
+                </h2>
+                <p className="mb-0 text-base leading-relaxed text-charcoal/68">
+                  From local culture platforms to travel partners and institutional support,
+                  NYS Travels works with brands that help make each Ghana experience smoother,
+                  safer, and more memorable.
+                </p>
+              </div>
+
+              <div className="grid gap-3 self-center sm:grid-cols-2">
+                {[
+                  {
+                    name: "Escape Accra",
+                    role: "Culture partner",
+                    image: "/sponsors/escape-accra.webp",
+                    fit: "contain",
+                  },
+                  {
+                    name: "Pepsodent",
+                    role: "Wellness sponsor",
+                    image: "/sponsors/pepsodent.webp",
+                    fit: "cover",
+                  },
+                  {
+                    name: "Swiss Embassy",
+                    role: "Institutional partner",
+                    image: "/sponsors/swiss-embassy.webp",
+                    fit: "cover",
+                  },
+                  {
+                    name: "AEJ Travel and Tours",
+                    role: "Travel partner",
+                    image: "/sponsors/aej-travel-and-tours.webp",
+                    fit: "contain",
+                  },
+                ].map((sponsor) => (
+                  <div
+                    key={sponsor.name}
+                    className="group flex items-center gap-4 rounded-2xl border border-primary/10 bg-cream/70 p-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:bg-cream md:p-4"
+                  >
+                    <div className="relative h-14 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-primary/8 bg-white shadow-sm">
+                      <Image
+                        src={sponsor.image}
+                        alt={`${sponsor.name} sponsor`}
+                        fill
+                        sizes="80px"
+                        className={
+                          sponsor.fit === "cover"
+                            ? "object-cover"
+                            : "object-contain p-1.5"
+                        }
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-brand text-lg tracking-wide text-ink">
+                        {sponsor.name}
+                      </div>
+                      <div className="mt-0.5 text-xs font-semibold uppercase tracking-[0.14em] text-charcoal/45">
+                        {sponsor.role}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -408,22 +392,26 @@ export default function Home() {
         {/* ═══════════════ HOW IT WORKS (Interactive) ═══════════════ */}
         <HowItWorks />
 
-        {/* ═══════════════ SKIP TO BOOKING BANNER ═══════════════ */}
-        <SkipToBooking />
-
         {/* ═══════════════ SAMPLE ITINERARY ═══════════════ */}
         <section
           id="sample-itinerary"
-          className="relative py-20 md:py-32 bg-cream"
+          className="relative py-24 md:py-32 bg-cream"
         >
           <div className="container-wide">
             {/* Header */}
-            <div className="mb-16">
+            <div className="mb-14 max-w-3xl">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-px w-10 bg-primary" />
+                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                  Daily Rhythm
+                </span>
+              </div>
               <h2 className="text-5xl md:text-6xl font-display text-ink leading-tight mb-4">
                 A day in the journey
               </h2>
-              <p className="text-lg text-charcoal/70">
-                Day 3 from our Cultural Explorer
+              <p className="text-lg text-charcoal/70 leading-relaxed">
+                A sample day from our Cultural Explorer route. Clear pacing, fewer rushed stops,
+                and enough room for the moments people actually remember.
               </p>
             </div>
 
@@ -432,103 +420,115 @@ export default function Home() {
               {/* Left: Timeline - Compact Grid */}
               <div className="grid grid-cols-2 gap-x-12 gap-y-8">
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      7
-                    </span>
-                    <span className="text-xs text-primary font-bold">AM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        7
+                      </span>
+                      <span className="text-xs text-primary font-bold">AM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Breakfast & Checkout
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      Traditional breakfast, pack for Kumasi
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Breakfast & Checkout
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    Traditional breakfast, pack for Kumasi
-                  </p>
                 </div>
 
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      8:30
-                    </span>
-                    <span className="text-xs text-primary font-bold">AM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        8:30
+                      </span>
+                      <span className="text-xs text-primary font-bold">AM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Drive to Kumasi
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      4-hour scenic countryside drive
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Drive to Kumasi
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    4-hour scenic countryside drive
-                  </p>
                 </div>
 
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      1
-                    </span>
-                    <span className="text-xs text-primary font-bold">PM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        1
+                      </span>
+                      <span className="text-xs text-primary font-bold">PM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Lunch & Check-in
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      Ashanti cuisine, hotel check-in
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Lunch & Check-in
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    Ashanti cuisine, hotel check-in
-                  </p>
                 </div>
 
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      3
-                    </span>
-                    <span className="text-xs text-primary font-bold">PM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        3
+                      </span>
+                      <span className="text-xs text-primary font-bold">PM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Manhyia Palace
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      Royal residence, 300-year history
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Manhyia Palace
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    Royal residence, 300-year history
-                  </p>
                 </div>
 
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      6
-                    </span>
-                    <span className="text-xs text-primary font-bold">PM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        6
+                      </span>
+                      <span className="text-xs text-primary font-bold">PM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Kejetia Market
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      West Africa's largest market
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Kejetia Market
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    West Africa's largest market
-                  </p>
                 </div>
 
                 <div>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-4xl font-display text-primary/30">
-                      8
-                    </span>
-                    <span className="text-xs text-primary font-bold">PM</span>
+                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className="text-4xl font-display text-primary/35">
+                        8
+                      </span>
+                      <span className="text-xs text-primary font-bold">PM</span>
+                    </div>
+                    <h4 className="text-xl font-display text-ink mb-1">
+                      Dinner & Relax
+                    </h4>
+                    <p className="text-sm text-charcoal/60">
+                      Rooftop restaurant, free time
+                    </p>
                   </div>
-                  <h4 className="text-xl font-display text-ink mb-1">
-                    Dinner & Relax
-                  </h4>
-                  <p className="text-sm text-charcoal/60">
-                    Rooftop restaurant, free time
-                  </p>
                 </div>
               </div>
 
               {/* Right: Image + Inclusions */}
               <div className="space-y-8">
                 {/* Large Image */}
-                <div className="relative h-[400px] rounded-2xl overflow-hidden">
+                <div className="relative h-[400px] overflow-hidden rounded-[28px] shadow-[0_24px_70px_rgba(26,24,21,0.16)]">
                   <Image
                     src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=800&fit=crop"
-                    alt="Kumasi"
+                    alt="Travelers exploring a heritage site in Kumasi during a guided cultural day trip"
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
@@ -536,8 +536,8 @@ export default function Home() {
                 </div>
 
                 {/* What's Included */}
-                <div>
-                  <p className="text-sm uppercase tracking-widest text-primary mb-6 font-semibold">
+                <div className="rounded-[28px] border border-primary/10 bg-white p-7 shadow-sm">
+                  <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-primary">
                     Daily Inclusions
                   </p>
                   <div className="space-y-3 text-charcoal/80">
@@ -564,72 +564,156 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ═══════════════ HORIZONTAL SCROLL DESTINATIONS ═══════════════ */}
-        <section className="destinations-scroll relative h-screen bg-ink">
-          <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-            <div className="flex gap-8">
+        {/* ═══════════════ SIGNATURE DESTINATIONS ═══════════════ */}
+        <section className="relative overflow-hidden bg-ink py-24 md:py-32">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(232,106,51,0.16),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(45,90,61,0.24),transparent_34%)]" />
+          <div className="container-wide relative">
+            <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-3xl">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="h-px w-10 bg-primary" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                    Signature Stops
+                  </span>
+                </div>
+                <h2 className="text-5xl md:text-6xl font-display leading-tight !text-white">
+                  Places that stay with you
+                </h2>
+              </div>
+              <p className="max-w-xl text-base leading-relaxed !text-white/65 md:text-lg">
+                We cut the filler and keep the places with real emotional weight: coastline,
+                wildlife, and living tradition with enough time to actually feel each one.
+              </p>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-3">
               {[
                 {
                   name: "Cape Coast",
                   hook: "Where history speaks",
+                  detail: "Castle visits, coast air, and a slower afternoon that gives the story room to land.",
                   image:
                     "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1600&h=1200&fit=crop",
                 },
                 {
                   name: "Mole Park",
                   hook: "Walk with elephants",
+                  detail: "Big landscapes, quiet mornings, and the kind of wildlife encounter that feels improbably close.",
                   image:
                     "https://images.unsplash.com/photo-1534177616072-ef7dc120449d?w=1600&h=1200&fit=crop",
                 },
                 {
                   name: "Kumasi",
                   hook: "The heartbeat of tradition",
+                  detail: "Royal history, dense market energy, and a stronger sense of how culture is actually lived.",
                   image:
                     "https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1600&h=1200&fit=crop",
                 },
-              ].map((dest, i) => (
-                <div
-                  key={i}
-                  className="destination-card relative flex-shrink-0 w-[80vw] h-[80vh] rounded-3xl overflow-hidden ml-8 group cursor-pointer"
+              ].map((dest, index) => (
+                <motion.article
+                  key={dest.name}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.5, delay: index * 0.08 }}
+                  className="group relative min-h-[460px] overflow-hidden rounded-[32px] border border-white/10 bg-white/5"
                 >
-                  {/* Image */}
-                  <Image
-                    src={dest.image}
-                    alt={dest.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="80vw"
-                  />
-
-                  {/* Dark overlay - only shows on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Text - only shows on hover */}
-                  <div className="absolute inset-0 p-12 md:p-16 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h3
-                      className="text-6xl md:text-8xl font-display mb-4 !text-white leading-tight"
-                      style={{
-                        textShadow:
-                          "0 4px 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,1)",
-                      }}
-                    >
-                      {dest.name}
-                    </h3>
-                    <p
-                      className="text-2xl md:text-3xl font-display font-light italic !text-white/90"
-                      style={{ textShadow: "0 2px 12px rgba(0,0,0,1)" }}
-                    >
-                      {dest.hook}
-                    </p>
+                  <div className="absolute inset-0">
+                    <Image
+                      src={dest.image}
+                      alt={`${dest.name}, one of NYS Travels' signature destinations in Ghana`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                    />
                   </div>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/15" />
+                  <div className="relative flex h-full flex-col justify-between p-7 md:p-8">
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] !text-white/80">
+                        Stop {index + 1}
+                      </span>
+                      <MapPin className="mt-1 h-5 w-5 text-primary" />
+                    </div>
+
+                    <div>
+                      <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] !text-primary">
+                        {dest.hook}
+                      </p>
+                      <h3 className="mb-4 text-4xl font-display leading-none !text-white md:text-5xl">
+                        {dest.name}
+                      </h3>
+                      <p className="max-w-md text-base leading-relaxed !text-white/72">
+                        {dest.detail}
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
               ))}
             </div>
           </div>
         </section>
 
+        {/* ═══════════════ UPCOMING TRIPS ═══════════════ */}
+        <section
+          id="upcoming-trips"
+          className="relative py-24 md:py-32 bg-white"
+        >
+          <div className="container-wide">
+            <div className="max-w-3xl mb-16">
+              <h2 className="reveal-text text-5xl md:text-7xl font-display text-ink leading-tight mb-6">
+                Upcoming Departures
+              </h2>
+              <p className="reveal-text text-xl text-charcoal">
+                Scheduled group trips with confirmed dates. See what's included
+                and reserve your spot with just $50.
+              </p>
+            </div>
+
+            {/* Upcoming Trips Grid */}
+            <div className="grid md:grid-cols-3 gap-8 auto-rows-fr">
+              {upcomingTrips.map((trip, index) => (
+                <motion.div
+                  key={trip.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="h-full"
+                >
+                  <TripCard
+                    trip={trip}
+                    variant="departure"
+                    rating={getAverageRating(trip.id)}
+                    reviewCount={getReviewsByTripId(trip.id).length}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Next Steps - Single Row with Divider */}
+            <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Link
+                href="/trips"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_16px_36px_rgba(232,106,51,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-dark"
+              >
+                See all departures
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href="/book?custom=true"
+                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-300 hover:gap-3"
+              >
+                Or plan a private trip
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ═══════════════ REAL TRAVELERS GALLERY ═══════════════ */}
-        <section id="gallery" className="relative py-20 md:py-32 bg-sand">
+        <section id="gallery" className="relative py-24 md:py-32 bg-sand">
           <div className="container-wide">
             <div className="max-w-3xl mb-16">
               <h2 className="reveal-text text-5xl md:text-7xl font-display text-ink leading-tight mb-6">
@@ -642,78 +726,52 @@ export default function Home() {
             </div>
 
             {/* Gallery Grid - Magazine Style */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:auto-rows-[190px] xl:auto-rows-[220px]">
               {[
                 {
-                  name: "Sarah M.",
-                  location: "Atlanta, GA",
-                  trip: "Cape Coast Castle",
-                  image:
-                    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=800&h=800&fit=crop",
-                  size: "large", // col-span-2 row-span-2
+                  name: "Cape Coast Crew",
+                  location: "Central Region",
+                  trip: "Heritage stop",
+                  image: "/people/optimized/img-5.webp",
+                  size: "feature",
                 },
                 {
-                  name: "Marcus T.",
-                  location: "Brooklyn, NY",
-                  trip: "Accra Markets",
-                  image:
-                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop",
+                  name: "Kakum Walk",
+                  location: "Central Region",
+                  trip: "Canopy adventure",
+                  image: "/people/optimized/img-2.webp",
                   size: "normal",
                 },
                 {
-                  name: "Jennifer L.",
-                  location: "Los Angeles, CA",
-                  trip: "Mole National Park",
-                  image:
-                    "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=800&h=800&fit=crop",
+                  name: "Boat Day",
+                  location: "Ada",
+                  trip: "River escape",
+                  image: "/people/optimized/img-4.webp",
                   size: "normal",
                 },
                 {
-                  name: "David & Lisa K.",
-                  location: "Chicago, IL",
-                  trip: "Kumasi Cultural Tour",
-                  image:
-                    "https://images.unsplash.com/photo-1515041219749-89347f83291a?w=800&h=800&fit=crop",
+                  name: "Game Night",
+                  location: "Accra",
+                  trip: "Social experience",
+                  image: "/people/optimized/img-3.webp",
                   size: "normal",
                 },
                 {
-                  name: "Amara O.",
-                  location: "London, UK",
-                  trip: "Volta Region Waterfalls",
-                  image:
-                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=800&fit=crop",
-                  size: "normal",
-                },
-                {
-                  name: "James C.",
-                  location: "Toronto, Canada",
-                  trip: "Elephant Safari",
-                  image:
-                    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=800&fit=crop",
-                  size: "large", // col-span-2 row-span-2
-                },
-                {
-                  name: "Tasha W.",
-                  location: "Houston, TX",
-                  trip: "Beach Paradise",
-                  image:
-                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=800&fit=crop",
-                  size: "normal",
-                },
-                {
-                  name: "Michael R.",
-                  location: "Miami, FL",
-                  trip: "Kakum Canopy Walk",
-                  image:
-                    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=800&fit=crop",
+                  name: "Story Stop",
+                  location: "Cape Coast",
+                  trip: "Guided history",
+                  image: "/people/optimized/img-1.webp",
                   size: "normal",
                 },
               ]
-                .slice(0, 5)
                 .map((traveler, i) => (
                   <div
                     key={i}
-                    className={`reveal-text relative ${traveler.size === "large" ? "md:col-span-2 md:row-span-2" : ""} aspect-square overflow-hidden rounded-2xl group cursor-pointer`}
+                    className={`reveal-text group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl ${
+                      traveler.size === "feature"
+                        ? "sm:col-span-2 lg:col-span-6 lg:row-span-2 lg:aspect-auto"
+                        : "lg:col-span-3 lg:aspect-auto"
+                    }`}
                   >
                     {/* Image */}
                     <Image
@@ -721,7 +779,11 @@ export default function Home() {
                       alt={`${traveler.name} - ${traveler.trip}`}
                       fill
                       className="object-cover group-hover:scale-105 transition-all duration-500"
-                      sizes="(max-width: 768px) 50vw, 25vw"
+                      sizes={
+                        traveler.size === "feature"
+                          ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 50vw"
+                          : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      }
                     />
 
                     {/* Dark overlay - only shows on hover */}
@@ -766,10 +828,10 @@ export default function Home() {
             <div className="reveal-text text-center mt-16">
               <Link
                 href="/gallery"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+                className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-sm"
               >
                 More photos
-                <span>→</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -778,279 +840,45 @@ export default function Home() {
         {/* ═══════════════ TESTIMONIALS ═══════════════ */}
         <section
           id="testimonials"
-          className="testimonials-section relative py-20 md:py-32 bg-cream"
+          className="testimonials-section relative overflow-hidden bg-secondary py-20 md:py-28"
         >
-          <div className="container-wide">
-            <div className="max-w-3xl mx-auto mb-12 text-center">
-              <h2 className="text-4xl md:text-5xl font-display text-ink leading-tight mb-4">
-                Traveler Stories
-              </h2>
-              <p className="text-lg text-charcoal/70">
-                Real experiences from real adventurers
-              </p>
-            </div>
-
-            <div className="max-w-5xl mx-auto">
-              <ReviewsCarousel reviews={getFeaturedReviews()} />
-            </div>
-
-            {/* View All Link */}
-            <div className="text-center mt-12">
-              <Link
-                href="/reviews"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-              >
-                Read All Reviews
-                <span>→</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════ UPCOMING TRIPS ═══════════════ */}
-        <section
-          id="upcoming-trips"
-          className="relative py-20 md:py-32 bg-white"
-        >
-          <div className="container-wide">
-            <div className="max-w-3xl mb-16">
-              <h2 className="reveal-text text-5xl md:text-7xl font-display text-ink leading-tight mb-6">
-                Upcoming Departures
-              </h2>
-              <p className="reveal-text text-xl text-charcoal">
-                Scheduled group trips with confirmed dates. See what's included
-                and reserve your spot with just $50.
-              </p>
-            </div>
-
-            {/* Upcoming Trips Grid */}
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Trip 1 */}
-              <div className="reveal-text bg-cream rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 ease-out h-full flex flex-col cursor-pointer">
-                <div className="relative h-64">
-                  <Image
-                    src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=800&h=600&fit=crop"
-                    alt="7-Day Cultural Explorer"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute top-4 right-4 bg-secondary text-white px-4 py-2 rounded-full text-sm font-semibold">
-                    6 Spots Left
-                  </div>
+          <div className="container-wide relative">
+            <div className="mb-12 grid gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-end">
+              <div className="max-w-2xl">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="h-px w-10 bg-primary" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                    Traveler Stories
+                  </span>
                 </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-display text-ink mb-2 line-clamp-1">
-                    7-Day Cultural Explorer
-                  </h3>
-                  <p className="text-sm text-charcoal mb-4 line-clamp-2">
-                    Accra • Cape Coast • Kumasi • Volta Region
-                  </p>
-
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <span className="font-semibold">March 15-22, 2026</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Users className="w-5 h-5 text-primary" />
-                    <span>Small group (max 8)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
-                    <Clock className="w-4 h-4 text-secondary" />
-                    <span className="text-sm">Book by Feb 13, 2026</span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Historic castles & slave dungeons</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Ashanti Kingdom palaces & markets</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Wli Waterfalls & mountain villages</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Kente weaving & drumming workshops</span>
-                    </li>
-                  </ul>
-
-                  <div className="flex items-baseline gap-2 mb-4 mt-auto">
-                    <span className="text-4xl font-display text-primary">
-                      $1,850
-                    </span>
-                    <span className="text-charcoal">/person</span>
-                  </div>
-                  <Link
-                    href="/book?trip=cultural-march"
-                    className="block w-full text-center px-6 py-3 bg-primary text-white font-semibold rounded-full hover:bg-primary-dark transition-colors"
-                  >
-                    Reserve My Spot
-                  </Link>
-                </div>
+                <h2 className="text-4xl font-display leading-tight !text-white md:text-5xl">
+                  The part people talk about when they get home
+                </h2>
               </div>
 
-              {/* Trip 2 */}
-              <div className="reveal-text bg-cream rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 ease-out h-full flex flex-col cursor-pointer">
-                <div className="relative h-64">
-                  <Image
-                    src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&h=600&fit=crop"
-                    alt="10-Day Complete Experience"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute top-4 right-4 bg-secondary text-white px-4 py-2 rounded-full text-sm font-semibold">
-                    3 Spots Left
-                  </div>
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-display text-ink mb-2 line-clamp-1">
-                    10-Day Complete Experience
-                  </h3>
-                  <p className="text-sm text-charcoal mb-4 line-clamp-2">
-                    Cape Coast • Kumasi • Mole Park • Accra
-                  </p>
-
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <span className="font-semibold">April 10-20, 2026</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Users className="w-5 h-5 text-primary" />
-                    <span>Small group (max 8)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
-                    <Clock className="w-4 h-4 text-secondary" />
-                    <span className="text-sm">Book by Mar 10, 2026</span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Everything from 7-day tour PLUS...</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Mole National Park safari</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Walking safari with elephants</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Larabanga ancient mosque visit</span>
-                    </li>
-                  </ul>
-
-                  <div className="flex items-baseline gap-2 mb-4 mt-auto">
-                    <span className="text-4xl font-display text-primary">
-                      $2,400
-                    </span>
-                    <span className="text-charcoal">/person</span>
-                  </div>
-                  <Link
-                    href="/book?trip=complete-april"
-                    className="block w-full text-center px-6 py-3 bg-primary text-white font-semibold rounded-full hover:bg-primary-dark transition-colors"
-                  >
-                    Reserve My Spot
-                  </Link>
-                </div>
-              </div>
-
-              {/* Trip 3 */}
-              <div className="reveal-text bg-cream rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 ease-out h-full flex flex-col cursor-pointer">
-                <div className="relative h-64">
-                  <Image
-                    src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=800&h=600&fit=crop"
-                    alt="4-Day Weekend Safari"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold">
-                    Full - Waitlist
-                  </div>
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-2xl font-display text-ink mb-2 line-clamp-1">
-                    4-Day Cape Coast Weekend
-                  </h3>
-                  <p className="text-sm text-charcoal mb-4 line-clamp-2">
-                    Accra • Cape Coast • Kakum • Elmina
-                  </p>
-
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <span className="font-semibold">May 2-6, 2026</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal mb-3">
-                    <Users className="w-5 h-5 text-primary" />
-                    <span>Small group (max 8)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-charcoal/60 mb-4">
-                    <Clock className="w-4 h-4 text-secondary" />
-                    <span className="text-sm">Book by Apr 2, 2026</span>
-                  </div>
-
-                  <ul className="space-y-2 mb-6 text-sm text-charcoal flex-1">
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Cape Coast Castle tour</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Kakum Canopy Walk</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Elmina fishing village</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span>Beachfront hotel stay</span>
-                    </li>
-                  </ul>
-
-                  <div className="flex items-baseline gap-2 mb-4 mt-auto">
-                    <span className="text-4xl font-display text-primary">
-                      $850
-                    </span>
-                    <span className="text-charcoal">/person</span>
-                  </div>
-                  <Link
-                    href="/book?trip=safari-may"
-                    className="block w-full text-center px-6 py-3 bg-stone text-charcoal font-semibold rounded-full hover:bg-earth transition-colors"
-                  >
-                    Join Waitlist
-                  </Link>
-                </div>
+              <div className="max-w-xl lg:ml-auto">
+                <p className="mb-6 text-base leading-relaxed !text-white/68">
+                  The best signal is what travelers remember without being prompted:
+                  the pacing, the care, and the moments that felt personal.
+                </p>
+                <Link
+                  href="/reviews"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-[0.16em] text-secondary transition-all duration-300 hover:-translate-y-0.5 hover:bg-cream"
+                >
+                  All reviews
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
 
-            {/* Custom Trip Option */}
-            <div className="mt-12 text-center">
-              <p className="text-charcoal text-lg mb-4">
-                Don't see dates that work for you?
-              </p>
-              <Link
-                href="/book?custom=true"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-              >
-                Request Custom Dates
-                <span>→</span>
-              </Link>
+            <div>
+              <ReviewsTeaser reviews={getFeaturedReviews()} />
             </div>
           </div>
         </section>
 
         {/* ═══════════════ FAQ ═══════════════ */}
-        <section id="faq" className="relative py-20 md:py-32 bg-cream">
+        <section id="faq" className="relative py-24 md:py-32 bg-cream">
           <div className="container-wide">
             <div className="max-w-3xl mb-16">
               <h2 className="reveal-text text-5xl md:text-7xl font-display text-ink leading-tight mb-6">
@@ -1062,8 +890,7 @@ export default function Home() {
             </div>
 
             <div className="max-w-4xl mx-auto relative">
-              {/* Show only first 3 FAQs */}
-              {faqs.slice(0, 3).map((faq, i) => (
+              {faqs.map((faq, i) => (
                 <div
                   key={i}
                   className="reveal-text border-b border-stone last:border-0 overflow-hidden"

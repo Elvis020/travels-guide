@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { Seo } from "@/components/seo/Seo";
 import { Header, Footer } from "@/components/layout";
-import { Button } from "@/components/ui";
+import { Button, Link } from "@/components/ui";
 import { Compass, MapPin, ArrowRight, Home } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -14,6 +14,12 @@ import { Compass, MapPin, ArrowRight, Home } from "lucide-react";
 export default function NotFound() {
   return (
     <>
+      <Seo
+        title="Page Not Found"
+        description="This NYS Travels page could not be found. Explore trips, traveler reviews, or return to the homepage."
+        path="/404"
+        noindex
+      />
       <Header />
       <main className="min-h-screen bg-cream flex items-center justify-center pt-16">
         <div className="container-wide py-20">
