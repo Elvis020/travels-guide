@@ -1,11 +1,12 @@
 import type { Trip, Review } from "@/types";
+import { optimizeTripMedia } from "@/lib/media";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Mock Trip Data
 // This data will be replaced with Supabase queries in production
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const mockTrips: Trip[] = [
+const rawTrips: Trip[] = [
   {
     id: "1",
     slug: "maasai-mara-safari-adventure",
@@ -698,6 +699,8 @@ export const mockTrips: Trip[] = [
     updatedAt: "2024-02-18T00:00:00Z",
   },
 ];
+
+export const mockTrips: Trip[] = rawTrips.map(optimizeTripMedia);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Mock Reviews Data

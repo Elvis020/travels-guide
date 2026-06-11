@@ -1,5 +1,6 @@
 import type { CSSProperties, ImgHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
+import { buildUnsplashSrcSet, optimizeUnsplashUrl } from "@/lib/media";
 
 interface AppImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> {
   src: string;
@@ -19,6 +20,8 @@ export function AppImage({
   loading,
   ...props
 }: AppImageProps) {
+  const optimizedSrc = optimizeUnsplashUrl(src, { width: fill ? 1440 : 960 });
+  const srcSet = buildUnsplashSrcSet(src, fill ? [480, 768, 1024, 1440] : [320, 480, 768, 960]);
   const fillStyle: CSSProperties = fill
     ? {
         position: "absolute",
@@ -31,10 +34,13 @@ export function AppImage({
 
   return (
     <img
-      src={src}
+      src={optimizedSrc}
+      srcSet={srcSet}
       alt={alt}
       sizes={sizes}
       loading={priority ? "eager" : loading ?? "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
       className={cn(fill && "absolute inset-0 h-full w-full", className)}
       style={fillStyle}
       {...props}

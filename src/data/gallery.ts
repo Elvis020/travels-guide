@@ -1,11 +1,12 @@
 import type { GalleryItem } from "@/types";
+import { optimizeGalleryItem } from "@/lib/media";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Gallery Data - African Tourist Destinations
 // Showcasing the beauty and diversity of Africa
 // ═══════════════════════════════════════════════════════════════════════════
 
-export const galleryItems: GalleryItem[] = [
+const rawGalleryItems: GalleryItem[] = [
   // ─────────────────────────────────────────────────────────────────────────
   // Kenya - Maasai Mara & Wildlife
   // ─────────────────────────────────────────────────────────────────────────
@@ -350,6 +351,8 @@ export const galleryItems: GalleryItem[] = [
     featured: true,
   },
 ];
+
+export const galleryItems: GalleryItem[] = rawGalleryItems.map(optimizeGalleryItem);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Helper Functions

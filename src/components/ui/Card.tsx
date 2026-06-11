@@ -3,6 +3,7 @@
 import { forwardRef } from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { buildUnsplashSrcSet, optimizeUnsplashUrl } from "@/lib/media";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Card Component
@@ -80,10 +81,13 @@ export function CardImage({
       )}
     >
       <img
-        src={src}
+        src={optimizeUnsplashUrl(src, { width: 768 })}
+        srcSet={buildUnsplashSrcSet(src, [320, 480, 640, 768])}
         alt={alt}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         className="absolute inset-0 w-full h-full object-cover"
         loading="lazy"
+        decoding="async"
       />
       {overlay && (
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

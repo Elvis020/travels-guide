@@ -17,6 +17,15 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isSmallScreen = window.innerWidth < 1024;
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+    if (prefersReducedMotion || isSmallScreen || isTouchDevice) {
+      return;
+    }
+
     // Initialize Lenis smooth scroll with GSAP ScrollTrigger sync
     const initLenis = async () => {
       const { gsap } = await import('gsap');

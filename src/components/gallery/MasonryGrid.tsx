@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { buildUnsplashSrcSet, optimizeUnsplashUrl } from "@/lib/media";
 import { Play, ZoomIn } from "lucide-react";
 import type { GalleryItem } from "@/types";
 
@@ -64,13 +65,16 @@ export function MasonryGrid({ items, onItemClick }: MasonryGridProps) {
 
           {/* Image */}
           <img
-            src={item.url}
+            src={optimizeUnsplashUrl(item.url, { width: 720 })}
+            srcSet={buildUnsplashSrcSet(item.url, [320, 480, 640, 720])}
             alt={item.alt}
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             className={cn(
               "absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-110",
               loadedImages[item.id] ? "opacity-100" : "opacity-0"
             )}
             loading="lazy"
+            decoding="async"
             onLoad={() => handleImageLoad(item.id)}
           />
 

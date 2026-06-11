@@ -27,6 +27,7 @@ import {
   buildOrganizationSchema,
   buildTripSchema,
 } from "@/lib/seo";
+import { buildUnsplashSrcSet, optimizeUnsplashUrl } from "@/lib/media";
 import {
   formatPrice,
   formatDateRange,
@@ -252,7 +253,9 @@ function HeroGallery({ trip }: { trip: NonNullable<ReturnType<typeof getTripBySl
       <AnimatePresence mode="wait">
         <motion.img
           key={activeIndex}
-          src={allImages[activeIndex].url}
+          src={optimizeUnsplashUrl(allImages[activeIndex].url, { width: 1440 })}
+          srcSet={buildUnsplashSrcSet(allImages[activeIndex].url, [480, 768, 1024, 1440])}
+          sizes="100vw"
           alt={allImages[activeIndex].alt}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -300,9 +303,11 @@ function HeroGallery({ trip }: { trip: NonNullable<ReturnType<typeof getTripBySl
               )}
             >
               <img
-                src={img.url}
+                src={optimizeUnsplashUrl(img.url, { width: 120 })}
                 alt={img.alt}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             </button>
           ))}

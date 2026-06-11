@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Header, Footer } from "@/components/layout";
 import { AppImage as Image, Link } from "@/components/ui";
 import { FloatingCTA } from "@/components/navigation";
-import { ReviewsTeaser } from "@/components/sections/ReviewsTeaser";
-import HowItWorks from "@/components/sections/HowItWorks";
 import { TripCard } from "@/components/trips/TripCard";
 import { Seo } from "@/components/seo/Seo";
 import { getFeaturedFAQs } from "@/data/faqs";
@@ -16,9 +14,15 @@ import { buildOrganizationSchema, buildWebsiteSchema } from "@/lib/seo";
 import {
   Check,
   MapPin,
-  ChevronDown,
   ArrowRight,
 } from "lucide-react";
+
+const ReviewsTeaser = lazy(() =>
+  import("@/components/sections/ReviewsTeaser").then((mod) => ({
+    default: mod.ReviewsTeaser,
+  })),
+);
+const HowItWorks = lazy(() => import("@/components/sections/HowItWorks"));
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -41,6 +45,13 @@ export default function Home() {
   const faqs = getFeaturedFAQs();
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isSmallScreen = window.innerWidth < 768;
+
+    if (prefersReducedMotion || isSmallScreen) {
+      return;
+    }
+
     // Dynamically import GSAP only when needed
     const loadAndInitGSAP = async () => {
       const { gsap } = await import("gsap");
@@ -218,12 +229,12 @@ export default function Home() {
             <div className="absolute inset-0 md:inset-x-8 md:top-8 md:bottom-8 overflow-hidden rounded-t-[40px] md:rounded-t-[300px] md:rounded-b-[20px] shadow-sm">
               <div data-speed="slow" className="relative w-full h-full">
                 <Image
-                  src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=80&w=2560&auto=format&fit=crop" // Lush Green Ghana Landscape
+                  src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=72&w=1600&auto=format&fit=crop"
                   alt="Ghana Green Landscape"
                   fill
                   priority
                   className="object-cover scale-on-scroll"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 50vw"
                 />
 
                 {/* Subtle overlay for atmosphere, not for text readability anymore */}
@@ -390,7 +401,9 @@ export default function Home() {
         </section>
 
         {/* ═══════════════ HOW IT WORKS (Interactive) ═══════════════ */}
-        <HowItWorks />
+        <Suspense fallback={null}>
+          <HowItWorks />
+        </Suspense>
 
         {/* ═══════════════ SAMPLE ITINERARY ═══════════════ */}
         <section
@@ -872,7 +885,9 @@ export default function Home() {
             </div>
 
             <div>
-              <ReviewsTeaser reviews={getFeaturedReviews()} />
+              <Suspense fallback={null}>
+                <ReviewsTeaser reviews={getFeaturedReviews()} />
+              </Suspense>
             </div>
           </div>
         </section>
