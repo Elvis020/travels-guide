@@ -15,6 +15,7 @@ import {
   Check,
   MapPin,
   ArrowRight,
+  ChevronDown,
 } from "lucide-react";
 
 const ReviewsTeaser = lazy(() =>
