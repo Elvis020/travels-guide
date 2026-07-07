@@ -160,10 +160,10 @@ export default function AboutPage() {
                 className="relative mx-auto w-full max-w-[34rem] aspect-[4/5] rounded-2xl overflow-hidden justify-self-center"
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=1000&fit=crop"
-                  alt="Portrait of Nana Yaw, founder and lead guide at NYS Travels"
+                  src="/images/nana-yaw.webp"
+                  alt="Nana Yaw Suspence, founder and guide at NYS Travels"
                   fill
-                  className="scale-[1.16] object-cover object-center"
+                  className="object-cover object-center"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </motion.div>
@@ -177,7 +177,7 @@ export default function AboutPage() {
                 className="mx-auto w-full max-w-xl"
               >
                 <h2 className="text-4xl md:text-5xl font-display text-ink mb-6">
-                  Meet Nana Yaw
+                  Meet Nana Yaw Suspence
                 </h2>
                 <div className="space-y-4 text-charcoal leading-relaxed">
                   <p>

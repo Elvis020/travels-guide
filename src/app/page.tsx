@@ -42,9 +42,47 @@ const HowItWorks = lazy(() => import("@/components/sections/HowItWorks"));
 export default function Home() {
   const mainRef = useRef<HTMLElement>(null);
   const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
+  const currentYear = new Date().getFullYear();
   const upcomingTrips = getUpcomingTrips().slice(0, 3);
   const faqs = getFeaturedFAQs();
-
+  const itineraryStops = [
+    {
+      time: "7",
+      period: "AM",
+      title: "Breakfast & Checkout",
+      description: "Traditional breakfast, pack for Kumasi",
+    },
+    {
+      time: "8:30",
+      period: "AM",
+      title: "Drive to Kumasi",
+      description: "4-hour scenic countryside drive",
+    },
+    {
+      time: "1",
+      period: "PM",
+      title: "Lunch & Check-in",
+      description: "Ashanti cuisine, hotel check-in",
+    },
+    {
+      time: "3",
+      period: "PM",
+      title: "Manhyia Palace",
+      description: "Royal residence, 300-year history",
+    },
+    {
+      time: "6",
+      period: "PM",
+      title: "Kejetia Market",
+      description: "West Africa's largest market",
+    },
+    {
+      time: "8",
+      period: "PM",
+      title: "Dinner & Relax",
+      description: "Rooftop restaurant, free time",
+    },
+  ];
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isSmallScreen = window.innerWidth < 768;
@@ -173,7 +211,7 @@ export default function Home() {
               {/* Status Pill */}
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/5 border border-secondary/10 text-secondary text-xs uppercase tracking-[0.2em] mb-8 md:mb-12">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Now Booking 2025
+                Now Booking {currentYear}
               </div>
 
               {/* Massive Editorial Headline */}
@@ -196,23 +234,21 @@ export default function Home() {
               </p>
 
               {/* CTA Group */}
-              <div className="mt-10 md:mt-14 flex flex-col sm:flex-row items-start sm:items-center gap-6 pl-2">
+              <div className="mt-10 md:mt-14 flex flex-row flex-nowrap items-center gap-3 pl-0 sm:gap-6 sm:pl-2">
                 <Link
                   href="/trips"
-                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-white shadow-[0_10px_24px_rgba(232,106,51,0.14)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-dark"
+                  className="btn-primary group shrink-0 px-5 py-3.5 text-[0.72rem] uppercase tracking-[0.08em] sm:gap-3 sm:px-8 sm:py-4 sm:text-sm sm:tracking-wide"
                 >
-                  <span className="font-bold tracking-wide text-sm uppercase">
-                    Find your trip
-                  </span>
+                  <span>Find your trip</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
 
                 <Link
                   href="#meet-nana"
-                  className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-secondary transition-all duration-300 hover:gap-3 hover:text-primary"
+                  className="inline-flex min-w-0 items-center gap-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-secondary transition-all duration-300 hover:gap-2 hover:text-primary sm:gap-2 sm:text-sm sm:tracking-[0.18em] sm:hover:gap-3"
                 >
-                  Meet your guide
-                  <ArrowRight className="h-4 w-4" />
+                  <span className="whitespace-nowrap">Meet your guide</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
               </div>
 
@@ -228,7 +264,7 @@ export default function Home() {
           <div className="md:w-[55%] relative h-[50vh] md:h-screen lg:sticky lg:top-0">
             {/* The Arch Container */}
             <div className="absolute inset-0 md:inset-x-8 md:top-8 md:bottom-8 overflow-hidden rounded-t-[40px] md:rounded-t-[300px] md:rounded-b-[20px] shadow-sm">
-              <div data-speed="slow" className="relative w-full h-full">
+              <div data-speed="slow" className="relative h-full w-full">
                 <Image
                   src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?q=72&w=1600&auto=format&fit=crop"
                   alt="Ghana Green Landscape"
@@ -245,7 +281,7 @@ export default function Home() {
 
             {/* Floating Detail */}
             <div className="absolute -left-12 bottom-24 hidden md:block z-30">
-              <div className="bg-cream px-5 py-4 rounded-2xl shadow-xl max-w-[220px] border border-secondary/10">
+              <div className="surface-card max-w-[220px] px-5 py-4">
                 <div className="flex -space-x-2 mb-3">
                   {[1, 2, 3].map((i) => (
                     <div
@@ -306,7 +342,7 @@ export default function Home() {
 
               {/* Portrait */}
               <div className="reveal-text flex justify-center md:justify-center">
-                <div className="group relative aspect-[2/3] w-full max-w-[420px] overflow-hidden rounded-[32px] bg-ink shadow-2xl">
+                <div className="group relative aspect-[2/3] w-full max-w-[420px] overflow-hidden rounded-[32px] bg-ink shadow-[var(--shadow-lg)]">
                   <Image
                     src="/images/nana-yaw.webp"
                     alt="Nana Yaw Suspence, founder and guide at NYS Travels"
@@ -409,137 +445,54 @@ export default function Home() {
         {/* ═══════════════ SAMPLE ITINERARY ═══════════════ */}
         <section
           id="sample-itinerary"
-          className="relative py-24 md:py-32 bg-cream"
+          className="relative bg-cream py-18 pb-32 md:py-32"
         >
           <div className="container-wide">
             {/* Header */}
-            <div className="mb-14 max-w-3xl">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="h-px w-10 bg-primary" />
-                <span className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-                  Daily Rhythm
-                </span>
-              </div>
-              <h2 className="text-5xl md:text-6xl font-display text-ink leading-tight mb-4">
+            <div className="mb-10 max-w-3xl md:mb-14">
+              <div className="eyebrow mb-5">Daily Rhythm</div>
+              <h2 className="mb-4 text-4xl font-display leading-tight text-ink md:text-6xl">
                 A day in the journey
               </h2>
-              <p className="text-lg text-charcoal/70 leading-relaxed">
+              <p className="max-w-[34rem] text-base leading-relaxed text-charcoal/70 md:text-lg">
                 A sample day from our Cultural Explorer route. Clear pacing, fewer rushed stops,
                 and enough room for the moments people actually remember.
               </p>
             </div>
 
             {/* Two Column Layout */}
-            <div className="grid md:grid-cols-2 gap-16 md:gap-24">
+            <div className="grid gap-10 md:grid-cols-2 md:gap-24">
               {/* Left: Timeline - Compact Grid */}
-              <div className="grid grid-cols-2 gap-x-12 gap-y-8">
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        7
-                      </span>
-                      <span className="text-xs text-primary font-bold">AM</span>
+              <div className="relative grid gap-4 md:grid-cols-2 md:gap-x-12 md:gap-y-8">
+                <div className="absolute bottom-5 left-[2.45rem] top-5 w-px bg-primary/10 md:hidden" />
+                {itineraryStops.map((stop) => (
+                  <div key={`${stop.time}-${stop.title}`} className="relative">
+                    <div className="surface-card relative flex min-h-[116px] gap-4 p-4 md:block md:min-h-0 md:rounded-2xl md:px-5 md:py-5">
+                      <div className="flex w-16 shrink-0 flex-col items-center justify-center rounded-2xl bg-primary/6 text-center md:mb-2 md:w-auto md:flex-row md:items-baseline md:justify-start md:gap-3 md:bg-transparent">
+                        <span className="font-display text-3xl leading-none text-primary/45 md:text-4xl md:text-primary/35">
+                          {stop.time}
+                        </span>
+                        <span className="mt-1 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary md:mt-0 md:text-xs md:tracking-normal">
+                          {stop.period}
+                        </span>
+                      </div>
+                      <div className="min-w-0 self-center md:self-auto">
+                        <h4 className="mb-1 font-display text-[1.55rem] leading-[1.05] text-ink md:text-xl">
+                          {stop.title}
+                        </h4>
+                        <p className="text-[0.95rem] leading-relaxed text-charcoal/62 md:text-sm md:leading-normal md:text-charcoal/60">
+                          {stop.description}
+                        </p>
+                      </div>
                     </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Breakfast & Checkout
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      Traditional breakfast, pack for Kumasi
-                    </p>
                   </div>
-                </div>
-
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        8:30
-                      </span>
-                      <span className="text-xs text-primary font-bold">AM</span>
-                    </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Drive to Kumasi
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      4-hour scenic countryside drive
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        1
-                      </span>
-                      <span className="text-xs text-primary font-bold">PM</span>
-                    </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Lunch & Check-in
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      Ashanti cuisine, hotel check-in
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        3
-                      </span>
-                      <span className="text-xs text-primary font-bold">PM</span>
-                    </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Manhyia Palace
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      Royal residence, 300-year history
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        6
-                      </span>
-                      <span className="text-xs text-primary font-bold">PM</span>
-                    </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Kejetia Market
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      West Africa's largest market
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <div className="rounded-2xl border border-primary/10 bg-white px-5 py-5 shadow-sm">
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className="text-4xl font-display text-primary/35">
-                        8
-                      </span>
-                      <span className="text-xs text-primary font-bold">PM</span>
-                    </div>
-                    <h4 className="text-xl font-display text-ink mb-1">
-                      Dinner & Relax
-                    </h4>
-                    <p className="text-sm text-charcoal/60">
-                      Rooftop restaurant, free time
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* Right: Image + Inclusions */}
-              <div className="space-y-8">
+              <div className="space-y-5 md:space-y-8">
                 {/* Large Image */}
-                <div className="relative h-[400px] overflow-hidden rounded-[28px] shadow-[0_24px_70px_rgba(26,24,21,0.16)]">
+                <div className="relative h-[260px] overflow-hidden rounded-[28px] shadow-[var(--shadow-lg)] md:h-[400px]">
                   <Image
                     src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=1200&h=800&fit=crop"
                     alt="Travelers exploring a heritage site in Kumasi during a guided cultural day trip"
@@ -550,7 +503,7 @@ export default function Home() {
                 </div>
 
                 {/* What's Included */}
-                <div className="rounded-[28px] border border-primary/10 bg-white p-7 shadow-sm">
+                <div className="surface-card p-5 md:p-7">
                   <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-primary">
                     Daily Inclusions
                   </p>
@@ -709,7 +662,7 @@ export default function Home() {
             <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/trips"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_16px_36px_rgba(232,106,51,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-dark"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[var(--shadow-primary-soft)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary-dark"
               >
                 See all departures
                 <ArrowRight className="h-4 w-4" />

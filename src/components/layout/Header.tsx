@@ -11,6 +11,7 @@ import {
   X,
   Heart,
   User,
+  ArrowRight,
 } from "lucide-react";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -32,8 +33,8 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const wishlistCount = useWishlistStore((state) => state.items.length);
 
-  // Gallery, Reviews, About, FAQ, and Trips pages should always have green background
-  const hasGreenBackground = ["/gallery", "/reviews", "/about", "/faq", "/trips"].includes(pathname);
+  // Inner pages should always have the solid green app bar.
+  const hasGreenBackground = ["/gallery", "/reviews", "/about", "/faq", "/trips", "/book"].includes(pathname);
 
   // Handle scroll effect - more dramatic threshold for story design
   useEffect(() => {
@@ -62,11 +63,14 @@ export function Header() {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
+      document.body.classList.add("mobile-menu-open");
     } else {
       document.body.style.overflow = "";
+      document.body.classList.remove("mobile-menu-open");
     }
     return () => {
       document.body.style.overflow = "";
+      document.body.classList.remove("mobile-menu-open");
     };
   }, [isMobileMenuOpen]);
 
@@ -216,85 +220,126 @@ export function Header() {
 
             {/* Menu panel */}
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[320px] bg-cream z-[var(--z-sticky)] lg:hidden overflow-y-auto"
+              initial={{ opacity: 0, y: 24, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.985 }}
+              transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-[var(--z-sticky)] h-[100vh] h-[100svh] overflow-hidden bg-cream lg:hidden"
             >
-              <div className="p-6">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_16%,rgba(232,106,51,0.055),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.42),transparent_38%)]" />
+              <div className="relative flex h-full flex-col px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(1.35rem+env(safe-area-inset-top))]">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                  <span className="font-display text-xl font-bold">
+                <div className="flex items-center justify-between">
+                  <Link
+                    href="/"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="font-display text-[1.65rem] font-bold tracking-tight text-ink"
+                  >
                     NYS <span className="text-primary">Travels</span>
-                  </span>
+                  </Link>
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="p-2 rounded-full hover:bg-sand transition-colors"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/72 text-ink/85 shadow-[var(--shadow-sm)] backdrop-blur-sm transition-all duration-200 hover:bg-white active:scale-95"
                     aria-label="Close menu"
                   >
-                    <X className="w-5 h-5 text-ink" />
+                    <X className="h-4.5 w-4.5" />
                   </button>
                 </div>
 
                 {/* Navigation */}
-                <nav className="space-y-1">
+                <motion.nav
+                  initial="hidden"
+                  animate="show"
+                  variants={{
+                    hidden: {},
+                    show: {
+                      transition: { staggerChildren: 0.045, delayChildren: 0.08 },
+                    },
+                  }}
+                  className="mt-10 flex-1 space-y-2"
+                  aria-label="Mobile navigation"
+                >
                   {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
-                      <Link
+                      <motion.div
                         key={item.label}
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
-                          "relative block px-4 py-3 rounded-xl font-medium transition-colors",
-                          isActive
-                            ? "text-ink"
-                            : "text-ink hover:bg-sand"
-                        )}
+                        variants={{
+                          hidden: { opacity: 0, y: 12 },
+                          show: { opacity: 1, y: 0 },
+                        }}
+                        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                       >
-                        {item.label}
-                        {isActive && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
-                        )}
-                      </Link>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={cn(
+                            "group relative flex h-[9.2svh] min-h-[54px] max-h-[66px] items-center justify-between rounded-[18px] px-3 transition-all duration-300 active:scale-[0.99]",
+                            isActive
+                              ? "text-ink"
+                              : "text-ink/58 hover:bg-white/34 hover:text-ink/82"
+                          )}
+                        >
+                          {isActive && (
+                            <span
+                              className="absolute left-0 top-1/2 h-8 w-0.5 -translate-y-1/2 rounded-full bg-primary/80"
+                              aria-hidden
+                            />
+                          )}
+                          <span className="font-display text-[clamp(1.8rem,7.2vw,2.55rem)] leading-none tracking-tight">
+                            {item.label}
+                          </span>
+                          <span
+                            className={cn(
+                              "flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300",
+                              isActive
+                                ? "bg-primary/10 text-primary"
+                                : "bg-ink/[0.035] text-ink/28 group-hover:translate-x-0.5 group-hover:bg-primary/8 group-hover:text-primary"
+                            )}
+                          >
+                            <ArrowRight className="h-4 w-4" />
+                          </span>
+                        </Link>
+                      </motion.div>
                     );
                   })}
-                </nav>
+                </motion.nav>
 
-                {/* Divider */}
-                <div className="my-6 border-t border-sand" />
-
-                {/* Account links */}
-                <div className="space-y-1">
+                {/* Bottom actions */}
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link
+                      href="/wishlist"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "relative flex h-11 items-center justify-center gap-2 rounded-full border border-ink/10 bg-white/58 text-sm font-semibold text-ink/82 backdrop-blur-sm transition-all duration-200 active:scale-[0.98]",
+                        pathname === "/wishlist" && "border-primary/25 bg-primary/10 text-primary"
+                      )}
+                    >
+                      <Heart className="h-4.5 w-4.5" />
+                      Wishlist
+                      {wishlistCount > 0 && (
+                        <span className="absolute right-3 top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                          {wishlistCount > 9 ? "9+" : wishlistCount}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex h-11 items-center justify-center gap-2 rounded-full border border-ink/10 bg-white/58 text-sm font-semibold text-ink/82 backdrop-blur-sm transition-all duration-200 active:scale-[0.98]"
+                    >
+                      <User className="h-4.5 w-4.5" />
+                      Sign In
+                    </Link>
+                  </div>
                   <Link
-                    href="/wishlist"
+                    href="/book?custom=true"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "relative flex items-center gap-3 px-4 py-3 rounded-xl transition-colors",
-                      pathname === "/wishlist"
-                        ? "text-ink"
-                        : "text-ink hover:bg-sand"
-                    )}
+                    className="btn-primary group h-13 justify-between px-5 text-[0.8rem] uppercase tracking-[0.13em] transition-all duration-200 active:scale-[0.985]"
                   >
-                    {pathname === "/wishlist" && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
-                    )}
-                    <Heart className="w-5 h-5" />
-                    Wishlist
-                    {wishlistCount > 0 && (
-                      <span className="ml-auto bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                        {wishlistCount}
-                      </span>
-                    )}
-                  </Link>
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-ink hover:bg-sand transition-colors"
-                  >
-                    <User className="w-5 h-5" />
-                    Sign In
+                    Plan your trip
+                    <ArrowRight className="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                 </div>
               </div>

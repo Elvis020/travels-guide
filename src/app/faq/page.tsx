@@ -108,7 +108,7 @@ export default function FAQPage() {
                       }}
                       className={`group flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm font-semibold transition-all duration-300 ${
                         isActive
-                          ? 'border-primary bg-primary text-white shadow-[0_12px_28px_rgba(232,106,51,0.24)]'
+                          ? 'border-primary bg-primary text-white shadow-[var(--shadow-primary-soft)]'
                           : 'border-white/12 bg-white/5 !text-white/74 hover:border-white/25 hover:bg-white/10'
                       }`}
                       aria-pressed={isActive}
@@ -134,7 +134,7 @@ export default function FAQPage() {
               {visibleCategories.map((category, categoryIndex) => (
                 <section
                   key={category.title}
-                  className="overflow-hidden rounded-[28px] border border-primary/10 bg-white shadow-[0_18px_60px_rgba(26,24,21,0.07)]"
+                  className="surface-card overflow-hidden"
                 >
                   <div className="flex flex-col gap-3 border-b border-sand bg-cream/60 px-5 py-5 sm:flex-row sm:items-center sm:justify-between md:px-7">
                     <div>

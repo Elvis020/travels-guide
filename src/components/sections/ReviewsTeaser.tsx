@@ -62,7 +62,7 @@ function TravelerIdentity({ review, compact = false }: { review: Review; compact
 
 function FeaturedReview({ review }: { review: Review }) {
   return (
-    <article className="relative overflow-hidden rounded-[28px] border border-white/12 bg-cream p-6 shadow-[0_24px_70px_rgba(12,28,18,0.24)] md:p-8 lg:min-h-[390px]">
+    <article className="relative overflow-hidden rounded-[28px] border border-white/12 bg-cream p-6 shadow-[var(--shadow-lg)] md:p-8 lg:min-h-[390px]">
       <div className="absolute right-6 top-6 hidden rounded-full border border-primary/12 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary md:block">
         Featured note
       </div>
@@ -91,7 +91,7 @@ function FeaturedReview({ review }: { review: Review }) {
 
 function SupportingReview({ review, index }: { review: Review; index: number }) {
   return (
-    <article className="group rounded-[22px] border border-white/10 bg-white p-5 shadow-[0_16px_42px_rgba(12,28,18,0.14)] transition-transform duration-300 ease-out hover:-translate-y-1 md:p-6">
+    <article className="group rounded-[22px] border border-white/10 bg-white p-5 shadow-[var(--shadow-card)] transition-transform duration-300 ease-out hover:-translate-y-1 md:p-6">
       <div className="mb-6 flex items-start justify-between gap-4">
         <TravelerIdentity review={review} compact />
         <span className="rounded-full bg-sand px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">

@@ -443,15 +443,26 @@ function QuickInfo({
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
       {infoItems.map((item) => (
-        <div key={item.label} className="bg-sand rounded-xl p-4">
-          <item.icon className="w-5 h-5 text-primary mb-2" />
-          <div className="text-xs text-stone uppercase tracking-wider mb-1">
-            {item.label}
+        <div
+          key={item.label}
+          className="surface-soft group flex items-center gap-4 p-4 transition-all duration-300 sm:block sm:rounded-xl sm:border-0 sm:bg-sand sm:shadow-none"
+        >
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-primary shadow-[var(--shadow-xs)] sm:mb-2 sm:h-auto sm:w-auto sm:justify-start sm:rounded-none sm:bg-transparent sm:shadow-none">
+            <item.icon className="h-5 w-5 sm:h-5 sm:w-5" />
           </div>
-          <div className="font-semibold text-ink">{item.value}</div>
-          <div className="text-sm text-charcoal/60">{item.subtext}</div>
+          <div className="min-w-0">
+            <div className="mb-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone sm:text-xs sm:font-normal sm:tracking-wider">
+              {item.label}
+            </div>
+            <div className="text-xl font-semibold leading-tight text-ink sm:text-base">
+              {item.value}
+            </div>
+            <div className="mt-1 text-sm leading-snug text-charcoal/60">
+              {item.subtext}
+            </div>
+          </div>
         </div>
       ))}
     </div>

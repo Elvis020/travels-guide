@@ -58,7 +58,7 @@ export function StickyBookingBar() {
               {/* Book CTA */}
               <Link
                 href="/trips"
-                className="flex-1 flex items-center justify-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-full hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30"
+                className="flex-1 flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-white shadow-[var(--shadow-primary-soft)] transition-colors hover:bg-primary-dark"
               >
                 <Calendar className="w-5 h-5" />
                 Book Your Trip
@@ -81,7 +81,7 @@ export function StickyBookingBar() {
                     animate={{ width: "auto", opacity: 1 }}
                     exit={{ width: 60, opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-secondary/95 backdrop-blur-xl rounded-2xl p-4 shadow-2xl shadow-ink/20 border border-white/10"
+                    className="rounded-2xl border border-white/10 bg-secondary/95 p-4 shadow-[var(--shadow-lg)] backdrop-blur-xl"
                   >
                     <div className="flex items-center gap-3">
                       {/* Contact options */}
@@ -121,7 +121,7 @@ export function StickyBookingBar() {
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.8, opacity: 0 }}
-                    className="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl shadow-primary/30 hover:bg-primary-dark transition-colors"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-[var(--shadow-primary-soft)] transition-colors hover:bg-primary-dark"
                   >
                     <Calendar className="w-6 h-6" />
                   </motion.button>

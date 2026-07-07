@@ -467,7 +467,7 @@ function DepartureTripCard({
       <motion.div
         whileHover={{ y: -4 }}
         transition={{ duration: 0.2 }}
-        className="bg-cream rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow h-full flex flex-col"
+        className="flex h-full flex-col overflow-hidden rounded-3xl bg-cream shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]"
       >
         {/* Image with badges */}
         <div className="relative h-64">
@@ -565,7 +565,7 @@ function DepartureTripCard({
           <button
             className={cn(
               buttonBg,
-              "w-full py-4 text-white font-bold rounded-full transition-all hover:shadow-lg",
+              "w-full rounded-full py-4 font-bold text-white transition-all hover:shadow-[var(--shadow-primary-soft)]",
               !isFullyBooked && "hover:bg-primary/90"
             )}
           >

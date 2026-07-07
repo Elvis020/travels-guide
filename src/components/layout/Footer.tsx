@@ -61,12 +61,6 @@ export function Footer() {
                 +233 123 456 789
               </a>
             </div>
-
-            {/* Booking status */}
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="!text-white/60">Now Booking 2025/2026</span>
-            </div>
           </div>
 
           {/* Navigation Column */}

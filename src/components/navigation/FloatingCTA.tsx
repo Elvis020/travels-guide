@@ -74,12 +74,12 @@ export default function FloatingCTA() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 100, scale: 0.8 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          className="fixed bottom-4 right-4 md:bottom-7 md:right-7 z-40"
+          className="hide-when-mobile-menu-open fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-40 md:bottom-7 md:right-7"
         >
           <motion.div
             layout
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="relative rounded-full shadow-[0_16px_40px_rgba(232,106,51,0.22)]"
+            className="relative rounded-full"
             style={{
               width: showScrollTop ? '46px' : 'auto',
               height: showScrollTop ? '46px' : 'auto',
@@ -96,7 +96,7 @@ export default function FloatingCTA() {
                   transition={{ duration: 0.2 }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="absolute inset-0 flex items-center justify-center rounded-full bg-secondary text-white transition-colors duration-300 hover:bg-secondary-dark"
+                  className="absolute inset-0 flex items-center justify-center rounded-full bg-secondary text-white shadow-[var(--shadow-md)] transition-colors duration-300 hover:bg-secondary-dark"
                   aria-label="Scroll to top"
                 >
                   <ArrowUp className="h-4.5 w-4.5" />
@@ -113,17 +113,12 @@ export default function FloatingCTA() {
                 >
                   <Link
                     href="/book?custom=true"
-                    className="flex items-center gap-2 rounded-full border border-primary/15 bg-white/96 px-3.5 py-2.5 text-ink shadow-[0_10px_30px_rgba(26,24,21,0.12)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_14px_34px_rgba(26,24,21,0.16)] md:gap-3 md:px-4.5"
+                    className="flex items-center gap-2 rounded-full border border-primary/10 bg-white/90 px-3.5 py-2.5 text-ink shadow-[var(--shadow-card)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/25 md:gap-3 md:px-4.5"
                   >
                     <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary">
                       <Sparkles className="h-4 w-4" />
                     </div>
-                    <div className="flex flex-col items-start leading-tight">
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary/75">
-                        Custom Trip
-                      </span>
-                      <span className="text-sm font-semibold">Plan with us</span>
-                    </div>
+                    <span className="pr-1 text-sm font-semibold leading-none">Plan with us</span>
                   </Link>
                 </motion.div>
               )}

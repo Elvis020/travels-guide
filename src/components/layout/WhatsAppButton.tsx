@@ -53,7 +53,7 @@ export function WhatsAppButton({
           }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-6 right-6 z-[var(--z-toast)] flex items-center gap-2 bg-secondary text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+          className="hide-when-mobile-menu-open fixed bottom-6 right-6 z-[var(--z-toast)] flex items-center gap-2 rounded-full bg-secondary px-4 py-3 text-white shadow-[var(--shadow-md)] transition-shadow hover:shadow-[var(--shadow-lg)]"
           aria-label="Chat on WhatsApp"
         >
           <MessageCircle className="w-6 h-6" />
